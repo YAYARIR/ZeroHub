@@ -1,0 +1,37 @@
+# Создано https://www.toptal.com/developers/gitignore/api/macos
+# Редактировать на https://www.toptal.com/developers/gitignore?templates=macos
+
+### macOS ###
+# Общий
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Значок должен заканчиваться двумя \r
+Икона
+
+
+# Миниатюры
+._*
+
+# Файлы, которые могут появиться в корне тома
+.DocumentRevisions-V100
+.fseventsd
+.Прожектор-V100
+.ВременныеЭлементы
+.Мусор
+.VolumeIcon.icns
+.com.apple.timemachine.не представлено
+
+# Каталоги, потенциально созданные на удаленном ресурсе AFP
+.AppleDB
+.AppleDesktop
+Сетевая папка для мусора
+Временные предметы
+.apdisk
+
+### Патч для macOS ###
+# Файлы, созданные iCloud
+*.icloud
+
+# Конец https://www.toptal.com/developers/gitignore/api/macos
