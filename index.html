@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zero Music</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(to top, #000000, #5e4b8a);
+            color: white;
+            height: 100vh; /* Занять всю высоту экрана */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .header {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .music-card {
+            background: linear-gradient(to bottom, #1a1a1a, #4d4d4d);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 80%;
+            text-align: center;
+        }
+        .play-button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            text-align: center;
+        }
+        .footer a {
+            color: white;
+        }
+        .music-controls {
+            position: fixed;
+            bottom: 60px; /* Отодвинуть выше от нижней части */
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+        }
+        input[type="range"] {
+            width: calc(100% - 100px); /* Длина ползунка */
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <img src="{{ url_for('static', filename='images/MAIN.jpg') }}" alt="Zero Music" style="max-width:100%; height:auto;">
+    <h1>Zero Music</h1>
+</div>
+
+<div class="music-card">
+    <h2 id="music-name">Music Name</h2>
+    <h3 id="music-author">Music Author</h3>
+    <button class="play-button" onclick="playMusic()">▶️ Play</button>
+</div>
+
+<div class="music-controls" id="music-controls" style="display:none;">
+    <audio id="audio" preload="auto"></audio>
+    <input type="range" id="seek-bar" value="0" step="1">
+    <span id="time-remaining">00:00</span> <!-- Отображение оставшегося времени -->
+    <button onclick="stopMusic()">❌ Stop</button>
+</div>
+
+<div class="footer">
+    <p>made by <a href="https://t.me/YAYRIRZ">@YAYRIRZ</a></p>
+</div>
+
+<script>
+let audio = document.getElementById('audio');
+let seekBar = document.getElementById('seek-bar');
+let musicControls = document.getElementById('music-controls');
+let timeRemaining = document.getElementById('time-remaining');
+
+// Функция для смены трека
+function changeTrack(src, name, author) {
+    stopMusic(); // Остановить текущую музыку
+    audio.src = src; // Установить новый трек
+    document.getElementById('music-name').innerText = name; // Обновить название
+    document.getElementById('music-author').innerText = author; // Обновить автора
+}
+
+// Обработчик события для обновления ползунка и оставшегося времени
+audio.addEventListener('timeupdate', function() {
+    seekBar.value = (audio.currentTime / audio.duration) * 100 || 0; 
+    const remainingTime = audio.duration - audio.currentTime; // Оставшееся время
+    timeRemaining.innerText = formatTime(remainingTime);
+});
+
+// Форматирование времени в минуты и секунды
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+// Установка текущего времени аудио при изменении ползунка
+seekBar.addEventListener('input', function() {
+    audio.currentTime = (seekBar.value / 100) * audio.duration; 
+});
+
+// Функция для воспроизведения музыки
+function playMusic() {
+    musicControls.style.display = 'block';
+    audio.play();
+}
+
+// Функция для остановки музыки
+function stopMusic() {
+    audio.pause();
+    audio.currentTime = 0; 
+}
+
+// Пример использования функции changeTrack для выбора трека
+// Вы можете добавить свои треки здесь:
+document.addEventListener("DOMContentLoaded", function() {
+   changeTrack("{{ url_for('static', filename='music/your_music_file.mp3') }}", "Трек Название", "Автор Трека");
+});
+</script>
+
+</body>
+</html>
