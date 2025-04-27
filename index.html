@@ -115,7 +115,7 @@
 <div class="symbols">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✧✧✧</div>
 
 <div class="header">
-    <img src="{{ url_for(filename='images/MAIN.jpg') }}" alt="Zero Music" style="max-width:100%; height:auto;">
+    <img src="{{ url_for(static, filename='MAIN.jpg') }}" alt="Zero Music" style="max-width:100%; height:auto;">
     <h1>Zero Music</h1>
 </div>
 
@@ -189,7 +189,7 @@ function stopMusic() {
 // Пример использования функции changeTrack для выбора трека
 // Вы можете добавить свои треки здесь:
 document.addEventListener("DOMContentLoaded", function() {
-   changeTrack("{{ url_for(filename='test.mp3') }}", "Test (Undertale)", "TobyFox");
+   changeTrack("{{ url_for(static, filename='test.mp3') }}", "Test (Undertale)", "TobyFox");
 });
 </script>
 
