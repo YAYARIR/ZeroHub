@@ -4,194 +4,401 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zero Music</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap" rel="stylesheet">
     <style>
         body {
             margin: 0;
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(to top, #000000, #3b2470);
-            color: white;
-            height: 100vh; /* Занять всю высоту экрана */
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #1a1a1a, #0a0a0a);
+            color: #ffffff;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            overflow-x: hidden; /* Prevent horizontal scroll due to stars */
+        }
+
+        /* Star background */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle linear infinite;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+
+        header {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            position: relative;
-            overflow-x: hidden; /* Запретить горизонтальную прокрутку */
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        .header {
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            text-decoration: none;
+             background: linear-gradient(to right, #00c6ff, #0072ff); /* Blue gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: #cccccc;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #00c6ff; /* Blue hover */
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 40px 20px;
             text-align: center;
-            margin-top: 20px;
         }
-        .music-card {
-            background: linear-gradient(to bottom, #1a1a1a, #2b2b2b);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 20px auto;
-            width: 80%;
-            text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #00c6ff, #0072ff); /* Blue gradient */
+             -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
         }
-        .play-button {
-            background-color: transparent;
-            border: none;
-            color: white;
-            font-size: 30px;
-            cursor: pointer;
+
+        .hero-section p {
+            font-size: 18px;
+            color: #cccccc;
+            margin-bottom: 30px;
         }
-        .play-button:hover {
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(to right, #00c6ff, #0072ff); /* Blue gradient */
+            color: #ffffff;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover {
             transform: scale(1.05);
         }
-        .stop-button {
-            background-color: transparent;
+
+        .music-player-container {
+            margin-top: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .music-player {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 350px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .music-player h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-size: 20px;
+        }
+
+        .music-player audio {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .music-player .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+         .music-player .controls button {
+            background: none;
             border: none;
-            color: white;
-            font-size: 30px;
+            color: #ffffff;
+            font-size: 24px;
             cursor: pointer;
-        }
-        .stop-button:hover {
-            transform: scale(0.95);
-        }
-        .footer {
-            position: fixed; /* Фиксированное позиционирование */
-            bottom: 10px; /* Отступ от низа */
-            left: 50%; /* Центрирование по горизонтали */
-            transform: translateX(-50%); /* Центрирование по горизонтали */
-            text-align: center; /* Выравнивание текста по центру */
-        }
-        .footer a {
-            color: white; /* Цвет ссылки */
-        }
-        .music-controls {
-			position : fixed; 
-			bottom :60px; 
-			left :0; 
-			right :0; 
-			background-color : rgba(255, 255, 255, 0.1); 
-			padding :10px; 
-			transition : opacity 0.5s ease; /* Плавное исчезновение */
-			opacity :1; /* Начальная непрозрачность */
-			display:none; /* Скрыть по умолчанию */
-		}
-		.music-controls.hidden { 
-			opacity :0; /* Непрозрачность при скрытии */
-		}
-		input[type="range"] {
-			width : calc(100% - 100px); /* Длина ползунка */
-		}
-		.symbols {
-			position:absolute; 
-			top:-50%; 
-			left:-50%; 
-			width :200%; 
-			height :200%; 
-			pointer-events:none; 
-			color:white; 
-			font-size :50px; 
-			opacity :0.1; 
-		}
-		
-		.white-stripe {
-		    position:absolute; 
-		    left:-50%; 
-		    width :200%; 
-		    height :50px; /* Высота полосы */
-		    background-color:white; 
-		    opacity:.2; /* Размытие полосы */
-		    filter : blur(15px); /* Размытие */
-		    z-index:-1; /* Позади других элементов */
-		}
+            transition: color 0.3s ease;
+         }
 
-		.white-stripe.top { top:-25px; } /* Верхняя полоса */
-		.white-stripe.bottom { bottom:-25px; } /* Нижняя полоса */
+         .music-player .controls button:hover {
+             color: #00c6ff; /* Blue hover */
+         }
 
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #cccccc;
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none; /* Hide menu by default on mobile */
+                flex-direction: column;
+                position: absolute;
+                top: 60px; /* Adjust based on header height */
+                left: 0;
+                right: 0;
+                background-color: rgba(0, 0, 0, 0.9);
+                padding: 10px 0;
+                text-align: center;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav ul li {
+                margin: 10px 0;
+            }
+
+             .menu-toggle {
+                display: block; /* Show hamburger icon on mobile */
+                font-size: 30px;
+                cursor: pointer;
+                color: #ffffff;
+            }
+
+            header {
+                 padding: 10px 15px;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .hero-section p {
+                font-size: 16px;
+            }
+
+            .cta-button {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+
+            .music-player {
+                padding: 15px;
+            }
+
+             .music-player .controls {
+                 gap: 10px;
+             }
+
+             .music-player .controls button {
+                 font-size: 20px;
+             }
+        }
+
+         @media (min-width: 769px) {
+            .menu-toggle {
+                display: none; /* Hide hamburger icon on desktop */
+            }
+         }
+
+          /* Gradient colors */
+         .logo, h1, .cta-button, nav ul li a:hover {
+             /* Example of using custom properties for colors */
+             --gradient-start: #00c6ff; /* Blue */
+             --gradient-end: #0072ff; /* Darker Blue */
+         }
+
+          /* Apply gradient to background clip for text/elements */
+         .logo, h1 {
+            background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-fill-color: transparent;
+         }
+
+         .cta-button {
+             background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+             color: #ffffff; /* Ensure text is white on gradient background */
+         }
     </style>
 </head>
 <body>
+    <div class="stars"></div>
+    <header>
+        <a href="#" class="logo">Zero Music</a>
+        <nav>
+            <div class="menu-toggle" id="mobile-menu">
+                &#9776; <!-- Hamburger icon -->
+            </div>
+            <ul id="nav-links">
+                <li><a href="#">Главная</a></li>
+                <li><a href="#">Музыка</a></li>
+                <li><a href="#">Исполнители</a></li>
+                <li><a href="#">О нас</a></li>
+                <li><a href="#">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
 
-<div class="white-stripe top"></div> <!-- Верхняя белая размытая полоса -->
-<div class="white-stripe bottom"></div> <!-- Нижняя белая размытая полоса -->
+    <main class="main-content">
+        <section class="hero-section">
+            <h1>Откройте мир музыки</h1>
+            <p>Находите, слушайте и делитесь любимыми треками.</p>
+            <a href="#" class="cta-button">Начать слушать</a>
+        </section>
 
-<div class="symbols">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✧✧✧</div>
+        <section class="music-player-container">
+            <div class="music-player">
+                <h3>SoundHelix Song 1</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+            <div class="music-player">
+                 <h3>SoundHelix Song 2</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+            <div class="music-player">
+                 <h3>SoundHelix Song 3</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+             <div class="music-player">
+                 <h3>SoundHelix Song 4</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+             <div class="music-player">
+                 <h3>SoundHelix Song 5</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+             <div class="music-player">
+                 <h3>SoundHelix Song 6</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+             <div class="music-player">
+                 <h3>SoundHelix Song 7</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+             <div class="music-player">
+                 <h3>SoundHelix Song 8</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+             <div class="music-player">
+                 <h3>SoundHelix Song 9</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+             <div class="music-player">
+                 <h3>SoundHelix Song 10</h3>
+                <audio controls>
+                    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" type="audio/mpeg">
+                    Ваш браузер не поддерживает элемент audio.
+                </audio>
+            </div>
+        </section>
 
-<div class="header">
-    <img src="{{ url_for(static, filename='MAIN.jpg') }}" alt="Zero Music" style="max-width:100%; height:auto;">
-    <h1>Zero Music</h1>
-</div>
+    </main>
 
-<div class="music-card">
-    <h2 id="music-name">Music Name</h2>
-    <h3 id="music-author">Music Author</h3>
-    <button class="play-button" onclick="playMusic()">▶️ Play</button>
-</div>
+    <footer>
+        <p>&copy; 2025 Zero Music. открытый сайт без авторских прав</p>
+    </footer>
 
-<div class="music-controls" id="music-controls">
-    <audio id="audio" preload="auto"></audio>
-    <input type="range" id="seek-bar" value="0" step="1">
-    <span id="time-remaining">00:00</span> <!-- Отображение оставшегося времени -->
-    <button class="stop-button" onclick="stopMusic()">❌ Stop</button>
-</div>
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
 
-<div class="footer">
-    <p>made by <a href="https://t.me/YAYRIRZ">@YAYRIRZ</a></p>
-</div>
+        if (mobileMenu && navLinks) {
+             mobileMenu.addEventListener('click', () => {
+                 navLinks.classList.toggle('active');
+             });
+        }
 
-<script>
-let audio = document.getElementById('audio');
-let seekBar = document.getElementById('seek-bar');
-let musicControls = document.getElementById('music-controls');
-let timeRemaining = document.getElementById('time-remaining');
+        // Add stars to background
+        const starsContainer = document.querySelector('.stars');
+        const numStars = 100; // Number of stars
 
-// Функция для смены трека
-function changeTrack(src, name, author) {
-    stopMusic(); // Остановить текущую музыку
-    audio.src = src; // Установить новый трек
-    document.getElementById('music-name').innerText = name; // Обновить название
-    document.getElementById('music-author').innerText = author; // Обновить автора
-}
-
-// Обработчик события для обновления ползунка и оставшегося времени
-audio.addEventListener('timeupdate', function() {
-    seekBar.value = (audio.currentTime / audio.duration) * 100 || 0; 
-    const remainingTime = audio.duration - audio.currentTime; // Оставшееся время
-    timeRemaining.innerText = formatTime(remainingTime);
-});
-
-// Форматирование времени в минуты и секунды
-function formatTime(seconds) {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-}
-
-// Установка текущего времени аудио при изменении ползунка
-seekBar.addEventListener('input', function() {
-    audio.currentTime = (seekBar.value / 100) * audio.duration; 
-});
-
-// Функция для воспроизведения музыки
-function playMusic() {
-	musicControls.style.display = 'block';
-	musicControls.classList.remove('hidden'); // Убираем класс скрытия
-	audio.play();
-}
-
-// Функция для остановки музыки
-function stopMusic() {
-	audio.pause();
-	audio.currentTime = 0;
-
-	musicControls.classList.add('hidden'); // Добавляем класс скрытия
-
-	setTimeout(() => { musicControls.style.display = 'none'; }, 500); // Скрываем после анимации
-}
-
-// Пример использования функции changeTrack для выбора трека
-// Вы можете добавить свои треки здесь:
-document.addEventListener("DOMContentLoaded", function() {
-   changeTrack("{{ url_for(static, filename='test.mp3') }}", "Test (Undertale)", "TobyFox");
-});
-</script>
-
+        for (let i = 0; i < numStars; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.animationDuration = `${Math.random() * 3 + 1}s`; // Random twinkle speed
+            starsContainer.appendChild(star);
+        }
+    </script>
 </body>
 </html>
