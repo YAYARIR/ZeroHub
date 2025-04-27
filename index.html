@@ -53,14 +53,14 @@
             transform: scale(0.95);
         }
         .footer {
-            position: fixed;
-            bottom: 10px;
-            left: 0;
-            right: 0;
-            text-align: center;
+            position: fixed; /* Фиксированное позиционирование */
+            bottom: 10px; /* Отступ от низа */
+            left: 50%; /* Центрирование по горизонтали */
+            transform: translateX(-50%); /* Центрирование по горизонтали */
+            text-align: center; /* Выравнивание текста по центру */
         }
         .footer a {
-            color: white;
+            color: white; /* Цвет ссылки */
         }
         .music-controls {
 			position : fixed; 
@@ -112,7 +112,7 @@
 <div class="white-stripe top"></div> <!-- Верхняя белая размытая полоса -->
 <div class="white-stripe bottom"></div> <!-- Нижняя белая размытая полоса -->
 
-<div class="symbols">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦</div>
+<div class="symbols">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✧✧✧</div>
 
 <div class="header">
     <img src="{{ url_for('static', filename='images/MAIN.jpg') }}" alt="Zero Music" style="max-width:100%; height:auto;">
