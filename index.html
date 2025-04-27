@@ -9,25 +9,28 @@
         body {
             margin: 0;
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(to top, #000000, #5e4b8a);
+            background: linear-gradient(to top, #000000, #3b2470);
             color: white;
             height: 100vh; /* Занять всю высоту экрана */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            position: relative;
+            overflow-x: hidden; /* Запретить горизонтальную прокрутку */
         }
         .header {
             text-align: center;
             margin-top: 20px;
         }
         .music-card {
-            background: linear-gradient(to bottom, #1a1a1a, #4d4d4d);
+            background: linear-gradient(to bottom, #1a1a1a, #2b2b2b);
             border-radius: 15px;
             padding: 20px;
             margin: 20px auto;
             width: 80%;
             text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .play-button {
             background-color: transparent;
@@ -35,6 +38,19 @@
             color: white;
             font-size: 30px;
             cursor: pointer;
+        }
+        .play-button:hover {
+            transform: scale(1.05);
+        }
+        .stop-button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        .stop-button:hover {
+            transform: scale(0.95);
         }
         .footer {
             position: fixed;
@@ -47,19 +63,56 @@
             color: white;
         }
         .music-controls {
-            position: fixed;
-            bottom: 60px; /* Отодвинуть выше от нижней части */
-            left: 0;
-            right: 0;
-            background-color: rgba(255, 255, 255, 0.1);
-            padding: 10px;
-        }
-        input[type="range"] {
-            width: calc(100% - 100px); /* Длина ползунка */
-        }
+			position : fixed; 
+			bottom :60px; 
+			left :0; 
+			right :0; 
+			background-color : rgba(255, 255, 255, 0.1); 
+			padding :10px; 
+			transition : opacity 0.5s ease; /* Плавное исчезновение */
+			opacity :1; /* Начальная непрозрачность */
+			display:none; /* Скрыть по умолчанию */
+		}
+		.music-controls.hidden { 
+			opacity :0; /* Непрозрачность при скрытии */
+		}
+		input[type="range"] {
+			width : calc(100% - 100px); /* Длина ползунка */
+		}
+		.symbols {
+			position:absolute; 
+			top:-50%; 
+			left:-50%; 
+			width :200%; 
+			height :200%; 
+			pointer-events:none; 
+			color:white; 
+			font-size :50px; 
+			opacity :0.1; 
+		}
+		
+		.white-stripe {
+		    position:absolute; 
+		    left:-50%; 
+		    width :200%; 
+		    height :50px; /* Высота полосы */
+		    background-color:white; 
+		    opacity:.2; /* Размытие полосы */
+		    filter : blur(15px); /* Размытие */
+		    z-index:-1; /* Позади других элементов */
+		}
+
+		.white-stripe.top { top:-25px; } /* Верхняя полоса */
+		.white-stripe.bottom { bottom:-25px; } /* Нижняя полоса */
+
     </style>
 </head>
 <body>
+
+<div class="white-stripe top"></div> <!-- Верхняя белая размытая полоса -->
+<div class="white-stripe bottom"></div> <!-- Нижняя белая размытая полоса -->
+
+<div class="symbols">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦</div>
 
 <div class="header">
     <img src="{{ url_for('static', filename='images/MAIN.jpg') }}" alt="Zero Music" style="max-width:100%; height:auto;">
@@ -72,11 +125,11 @@
     <button class="play-button" onclick="playMusic()">▶️ Play</button>
 </div>
 
-<div class="music-controls" id="music-controls" style="display:none;">
+<div class="music-controls" id="music-controls">
     <audio id="audio" preload="auto"></audio>
     <input type="range" id="seek-bar" value="0" step="1">
     <span id="time-remaining">00:00</span> <!-- Отображение оставшегося времени -->
-    <button onclick="stopMusic()">❌ Stop</button>
+    <button class="stop-button" onclick="stopMusic()">❌ Stop</button>
 </div>
 
 <div class="footer">
@@ -118,20 +171,25 @@ seekBar.addEventListener('input', function() {
 
 // Функция для воспроизведения музыки
 function playMusic() {
-    musicControls.style.display = 'block';
-    audio.play();
+	musicControls.style.display = 'block';
+	musicControls.classList.remove('hidden'); // Убираем класс скрытия
+	audio.play();
 }
 
 // Функция для остановки музыки
 function stopMusic() {
-    audio.pause();
-    audio.currentTime = 0; 
+	audio.pause();
+	audio.currentTime = 0;
+
+	musicControls.classList.add('hidden'); // Добавляем класс скрытия
+
+	setTimeout(() => { musicControls.style.display = 'none'; }, 500); // Скрываем после анимации
 }
 
 // Пример использования функции changeTrack для выбора трека
 // Вы можете добавить свои треки здесь:
 document.addEventListener("DOMContentLoaded", function() {
-   changeTrack("{{ url_for('static', filename='music/your_music_file.mp3') }}", "Трек Название", "Автор Трека");
+   changeTrack("{{ url_for('static', filename='test.mp3') }}", "Test (Undertale)", "TobyFox");
 });
 </script>
 
