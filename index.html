@@ -189,7 +189,7 @@ function stopMusic() {
 // Пример использования функции changeTrack для выбора трека
 // Вы можете добавить свои треки здесь:
 document.addEventListener("DOMContentLoaded", function() {
-   changeTrack("{{ url_for('static', filename='test.mp3') }}", "Test (Undertale)", "TobyFox");
+   changeTrack("{{ url_for(filename='test.mp3') }}", "Test (Undertale)", "TobyFox");
 });
 </script>
 
