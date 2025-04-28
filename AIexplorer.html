@@ -1,4 +1,4 @@
-                                                               <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -50,8 +50,6 @@
             display: flex;
             align-items: center;
         }
-
-        /* Удалены специфичные цвета для букв логотипа */
 
         nav {
             display: flex;
@@ -176,7 +174,7 @@
         }
 
         .google-signin div {
-             width: 120px !important; /* Adjust width as needed */
+            width: 120px !important; /* Adjust width as needed */
         }
 
         .generated-site-container {
@@ -240,6 +238,7 @@
             max-width: 800px;
             text-align: left;
             width: 100%;
+            display: none; /* Скрыто по умолчанию */
         }
 
         .history-list {
@@ -257,43 +256,43 @@
             color: var(--light-text-color);
         }
 
-         /* Loader styles */
+        /* Loader styles */
         .loader {
-             border: 4px solid var(--hover-color);
-             border-top: 4px solid var(--primary-color);
-             border-radius: 50%;
-             width: 40px;
-             height: 40px;
-             animation: spin 1s linear infinite;
-             margin: 20px auto; /* Центрирование */
-             display: none; /* Скрыт по умолчанию */
-         }
+            border: 4px solid var(--hover-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto; /* Центрирование */
+            display: none; /* Скрыт по умолчанию */
+        }
 
-         @keyframes spin {
-             0% { transform: rotate(0deg); }
-             100% { transform: rotate(360deg); }
-         }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
 
         @media (max-width: 768px) {
-             header {
-                 flex-direction: column;
-                 padding: 10px 15px;
-             }
+            header {
+                flex-direction: column;
+                padding: 10px 15px;
+            }
 
-             .logo {
-                 margin-bottom: 10px;
-             }
+            .logo {
+                margin-bottom: 10px;
+            }
 
-             nav {
-                 margin-top: 10px;
-                 flex-direction: column;
-                 align-items: flex-start;
-             }
+            nav {
+                margin-top: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
-             nav a {
-                 margin: 5px 0;
-             }
+            nav a {
+                margin: 5px 0;
+            }
 
             .google-signin {
                 margin-left: 0;
@@ -317,9 +316,9 @@
             }
 
             .search-icon svg, .mic-icon svg, .camera-icon svg {
-                 width: 18px;
-                 height: 18px;
-             }
+                width: 18px;
+                height: 18px;
+            }
 
             .button {
                 font-size: 12px;
@@ -328,9 +327,8 @@
             }
 
             .generated-site-preview {
-                 height: 300px; /* Уменьшаем высоту на мобильных */
-             }
-
+                height: 300px; /* Уменьшаем высоту на мобильных */
+            }
 
             footer {
                 padding: 10px 15px;
@@ -348,24 +346,24 @@
             <a href="#features">Особенности</a>
             <a href="#how-it-works">Как это работает</a>
             <a href="#contact">Контакты</a>
-             <div class="google-signin">
-                 <div id="g_id_onload"
-                      data-client_id="YOUR_GOOGLE_CLIENT_ID"
-                      data-context="signin"
-                      data-ux_mode="popup"
-                      data-callback="handleCredentialResponse"
-                      data-auto_prompt="false">
-                 </div>
+            <div class="google-signin">
+                <div id="g_id_onload"
+                     data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                     data-context="signin"
+                     data-ux_mode="popup"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
 
-                 <div class="g_id_signin"
-                      data-type="standard"
-                      data-shape="rectangular"
-                      data-theme="outline"
-                      data-text="signin_with"
-                      data-size="small"
-                      data-logo_alignment="left">
-                 </div>
-             </div>
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-shape="rectangular"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-size="small"
+                     data-logo_alignment="left">
+                </div>
+            </div>
         </nav>
     </header>
 
@@ -376,273 +374,12 @@
 
             <div class="search-container">
                 <div class="search-box">
-                     <span class="search-icon">
-                         <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
-                     </span>
-                    <input type="text" id="siteDescription" placeholder="Опишите сайт, который вы хотите создать...">
-                     <span class="mic-icon">
-                         <svg class="goxjub" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285f4" d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.34-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z"></path><path fill="#34a853" d="m11.99 18.01c-2.5 0-4.51-2.01-4.51-4.5v-5.5h-1.5v5.5c0 3.38 2.72 6.11 6.1 6.11s6.1-2.73 6.1-6.11v-5.5h-1.5v5.5c0 2.49-2.02 4.5-4.51 4.5z"></path><path fill="#fbbc05" d="m8.58 20.02h6.84v0.03c0 2.42-1.97 4.38-4.39 4.38h-0.03c-2.42 0-4.39-1.96-4.39-4.38v-0.03z"></path><path fill="#ea4335" d="m12 17.98c-1.42 0-2.8-.19-3.98-.58v1.51c1.39.36 2.9.57 4.48.57 1.58 0 3.09-.21 4.48-.57v-1.51c-1.18.39-2.56.58-3.98.58z"></path></svg>
-                     </span>
-                     <span class="camera-icon">
-                        <svg class="n8Qv0" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m10 16.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5zm5-1.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm6.1-.89v-1.7l-2.28-2.27c-.59-.58-1.54-.58-2.12 0l-2.35 2.35-1.5-1.51c-.58-.57-1.54-.57-2.12.01l-2.34 2.36L3.83 9H5.5c.83 0 1.5-.67 1.5-1.5V6h3v1.5c0 .83.67 1.5 1.5 1.5h3c.83 0 1.5-.67 1.5-1.5V6h3v1.5c0 .83.67 1.5 1.5 1.5H20c.66 0 1.1-.82.78-1.44l-2.88-5.51C17.41 1.75 16.47 1 15.4 1H8.59c-1.08 0-2.02.75-2.4 1.45l-2.89 5.5C3 8.18 3.44 9 4.1 9H5.5v1.5c0 .83-.67 1.5-1.5 1.5H2c-.66 0-1.1.82-.78 1.44l2.88 5.51c.37.69 1.31 1.45 2.39 1.45h6.81c1.08 0 2.02-.75 2.4-1.45l2.88-5.5c.33-.62-.11-1.44-.77-1.44z"></path></svg>
-                     </span>
-                </div>
-                 <div class="buttons">
-                     <button class="button" onclick="generateSite()">Сгенерировать сайт</button>
-                     <button class="button" onclick="surpriseMe()">Мне повезет!</button>
-                 </div>
-            </div>
-        </section>
-
-         <div class="loader" id="loader"></div> <!-- Добавлен индикатор загрузки -->
-
-         <div class="generated-site-container" id="generatedSiteContainer">
-             <h2>Сгенерированный сайт</h2>
-             <iframe class="generated-site-preview" id="generatedSitePreview" srcdoc=""></iframe>
-             <button class="copy-code-button" onclick="copyGeneratedCode()" id="copyCodeButton">Скопировать HTML код</button>
-         </div>
-
-
-         <!-- Секции для контента могут быть добавлены ниже -->
-         <section id="features" style="margin-top: 60px; max-width: 800px; text-align: left;">
-            <h2>Особенности AIexplorer</h2>
-             <p>AIexplorer предлагает ряд мощных функций, которые упрощают создание веб-сайтов:</p>
-             <ul>
-                 <li>Генерация кода HTML/CSS/JS по текстовому описанию.</li>
-                 <li>Адаптивный дизайн по умолчанию для всех устройств.</li>
-                 <li>Минималистичный и стильный дизайн.</li>
-                 <li>Автоматическое добавление базовой структуры сайта (хедер, футер, главная секция).</li>
-                 <li>Возможность включения изображений и SVG (при наличии подходящих запросов и ресурсов).</li>
-                 <li>Интуитивно понятный интерфейс.</li>
-             </ul>
-         </section>
-
-        <section id="how-it-works" style="margin-top: 60px; max-width: 800px; text-align: left;">
-             <h2>Как это работает?</h2>
-             <p>Просто опишите сайт, который вы хотите получить, в текстовом поле. Например:</p>
-             <p style="font-style: italic; color: var(--light-text-color);">"Создай одностраничный сайт для кофейни в современном стиле с меню и контактной формой."</p>
-             <p>Наша нейросеть проанализирует ваш запрос и сгенерирует готовый код HTML, CSS и JavaScript, который вы сможете сразу использовать.</p>
-        </section>
-
-        <section id="contact" style="margin-top: 60px; max-width: 800px; margin-bottom: 60px; text-align: left;">
-             <h2>Контакты</h2>
-             <p>Есть вопросы или предложения? Свяжитесь с нами!</p>
-             <p>Email: <a href="mailto:info@aiexplorer.com" style="color: var(--primary-color); text-decoration: none;">info@aiexplorer.com</a></p>
-             <!-- Можно добавить форму обратной связи здесь -->
-        </section>
-
-         <section id="history" class="history-section" style="display: none;">
-             <h2>История запросов</h2>
-             <ul id="historyList" class="history-list">
-                 <!-- История будет загружаться сюда -->
-             </ul>
-         </section>
-
-    </main>
-
-    <footer>
-        &copy; 2025 AIexplorer. Все права защищены. АХХАХАХА СДЕЛАНО AIexplorer.
-    </footer>
-
-    <script type="module">
-        import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai";
-
-        // Replace with your actual API key
-        const API_KEY = "AIzaSyBy9iTyELfMAZUTh4xiu0l1htRXE4MU3tA"; // <-- ЗАМЕНИТЕ НА ВАШ КЛЮЧ API GEMINI
-
-        let currentUser = null;
-        let lastGeneratedCode = ""; // Переменная для хранения последнего сгенерированного кода
-
-        function handleCredentialResponse(response) {
-            const responsePayload = parseJwt(response.credential);
-            console.log("ID: " + responsePayload.sub);
-            console.log('Full Name: ' + responsePayload.name);
-            console.log('Given Name: ' + responsePayload.given_name);
-            console.log('Family Name: ' + responsePayload.family_name);
-            console.log("Image URL: " + responsePayload.picture);
-            console.log("Email: " + responsePayload.email);
-
-            currentUser = {
-                id: responsePayload.sub,
-                name: responsePayload.name,
-                email: responsePayload.email
-            };
-
-            localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            updateUIForUser();
-            loadHistory(currentUser.id);
-        }
-
-        function parseJwt(token) {
-            var base64Url = token.split('.')[1];
-            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            return JSON.parse(jsonPayload);
-        }
-
-        function updateUIForUser() {
-            const signInButton = document.querySelector('.g_id_signin');
-            const historySection = document.getElementById('history');
-
-            if (currentUser) {
-                signInButton.style.display = 'none';
-                historySection.style.display = 'block';
-            } else {
-                signInButton.style.display = 'block';
-                historySection.style.display = 'none';
-            }
-        }
-
-        function loadHistory(userId) {
-            const history = JSON.parse(localStorage.getItem(`history_${userId}`) || '[]');
-            displayHistory(history);
-        }
-
-        function saveHistory(userId, query) {
-            const history = JSON.parse(localStorage.getItem(`history_${userId}`) || '[]');
-            history.push({ query: query, timestamp: new Date().toISOString() });
-            localStorage.setItem(`history_${userId}`, JSON.stringify(history));
-            displayHistory(history);
-        }
-
-        function displayHistory(history) {
-            const historyList = document.getElementById('historyList');
-            historyList.innerHTML = '';
-            history.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = `${item.query} (${new Date(item.timestamp).toLocaleString()})`;
-                historyList.appendChild(li);
-            });
-        }
-
-        async function generateSite() {
-            const input = document.getElementById('siteDescription');
-            const query = input.value.trim();
-            const generatedSiteContainer = document.getElementById('generatedSiteContainer');
-            const loader = document.getElementById('loader');
-            const previewFrame = document.getElementById('generatedSitePreview');
-            const copyButton = document.getElementById('copyCodeButton');
-
-            if (query === "") {
-                alert("Пожалуйста, опишите сайт, который вы хотите создать.");
-                return;
-            }
-
-            // Показать индикатор загрузки
-            loader.style.display = 'block';
-            generatedSiteContainer.style.display = 'none'; // Скрыть предыдущий результат
-
-            try {
-                const genAI = new GoogleGenerativeAI(API_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
-                // Составьте промт для Gemini
-                const prompt = `Сгенерируй HTML, CSS и JavaScript код для одностраничного веб-сайта по следующему описанию: "${query}".
-                Предоставь только полный HTML код, включая теги <style> для CSS и <script> для JavaScript внутри <head> или <body>, но без использования внешних файлов.
-                Убедись, что код валидный и содержит только один тег <html>.
-                Примерный формат ответа:
-                ```html
-                <!DOCTYPE html>
-                <html lang="ru">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>Название сайта</title>
-                    <style>
-                        /* CSS стили */
-                    </style>
-                </head>
-                <body>
-                    <!-- Содержимое сайта -->
-                    <script>
-                        // JavaScript код
-                    </script>
-                </body>
-                </html>
-                ```
-                `; // Добавьте более детальные инструкции, если нужно
-
-                const result = await model.generateContent(prompt);
-                const response = await result.response;
-                let text = response.text();
-
-                // Очистка от возможных лишних символов и форматирования
-                text = text.replace(/```html
-?/, '').replace(/
-?```/, '').trim();
-                lastGeneratedCode = text; // Сохраняем сгенерированный код
-
-                // Отобразить сгенерированный сайт в iframe
-                previewFrame.srcdoc = text;
-
-                // Показать контейнер с сайтом и кнопкой
-                generatedSiteContainer.style.display = 'block';
-
-                // Если пользователь вошел, сохраняем запрос в историю
-                if (currentUser) {
-                    saveHistory(currentUser.id, query);
-                }
-
-            } catch (error) {
-                console.error("Ошибка при генерации сайта:", error);
-                alert("Не удалось сгенерировать сайт. Пожалуйста, попробуйте еще раз или измените запрос.");
-                generatedSiteContainer.style.display = 'none'; // Скрыть контейнер при ошибке
-            } finally {
-                // Скрыть индикатор загрузки
-                loader.style.display = 'none';
-            }
-        }
-
-        function surpriseMe() {
-             const query = "Сгенерируй случайный красивый одностраничный сайт в современном стиле.";
-             document.getElementById('siteDescription').value = query; // Заполняем поле ввода
-             generateSite(); // Запускаем генерацию
-        }
-
-        function copyGeneratedCode() {
-            if (lastGeneratedCode) {
-                navigator.clipboard.writeText(lastGeneratedCode).then(() => {
-                    alert("HTML код скопирован в буфер обмена!");
-                }).catch(err => {
-                    console.error('Ошибка при копировании кода:', err);
-                    alert("Не удалось скопировать код. Пожалуйста, скопируйте вручную.");
-                });
-            } else {
-                alert("Нет сгенерированного кода для копирования.");
-            }
-        }
-
-
-        // Добавление слушателей событий для иконок (имитация работы)
-        document.querySelector('.mic-icon').addEventListener('click', () => {
-             alert("Идет прослушивание... (Имитация голосового ввода)");
-        });
-
-        document.querySelector('.camera-icon').addEventListener('click', () => {
-             alert("Загрузите изображение или сделайте снимок... (Имитация визуального ввода)");
-        });
-
-        // Проверить при загрузке страницы, вошел ли пользователь
-        document.addEventListener('DOMContentLoaded', () => {
-            const storedUser = localStorage.getItem('currentUser');
-            if (storedUser) {
-                currentUser = JSON.parse(storedUser);
-                updateUIForUser();
-                loadHistory(currentUser.id);
-            } else {
-                updateUIForUser(); // Скрыть секцию истории, если пользователь не вошел
-            }
-        });
-
-        // Expose functions to global scope if needed by Google Sign-In
-        window.handleCredentialResponse = handleCredentialResponse;
-        window.generateSite = generateSite;
-        window.surpriseMe = surpriseMe;
-        window.copyGeneratedCode = copyGeneratedCode;
-
-
-    </script>
-</body>
-</html>
+                           <span class="search-icon">
+                               <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                           </span>
+                         <input type="text" id="siteDescription" placeholder="Опишите сайт, который вы хотите создать...">
+                           <span class="mic-icon">
+                               <svg class="goxjub" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285f4" d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.34-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z"></path><path fill="#34a853" d="m11.99 18.01c-2.5 0-4.51-2.01-4.51-4.5v-5.5h-1.5v5.5c0 3.38 2.72 6.11 6.1 6.11s6.1-2.73 6.1-6.11v-5.5h-1.5v5.5c0 2.49-2.02 4.5-4.51 4.5z"></path><path fill="#fbbc05" d="m8.58 20.02h6.84v0.03c0 2.42-1.97 4.38-4.39 4.38h-0.03c-2.42 0-4.39-1.96-4.39-4.38v-0.03z"></path><path fill="#ea4335" d="m12 17.98c-1.42 0-2.8-.19-3.98-.58v1.51c1.39.36 2.9.57 4.48.57 1.58 0 3.09-.21 4.48-.57v-1.51c-1.18.39-2.56.58-3.98.58z"></path></svg>
+                           </span>
+                           <span class="camera-icon">
+                                <svg class="n8Qv0" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m10 16.5c0 .83-.67 1.5-1.5 1.5s-
