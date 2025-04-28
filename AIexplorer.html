@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIexplorer - Генератор сайтов AIexplorer</title>
+    <title>AIexplorer - Генератор сайтов</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -52,7 +52,6 @@
             <textarea id="description" placeholder="Опишите ваш сайт..."></textarea>
             <button id="generateBtn">Сгенерировать сайт</button>
             <div id="loader" class="hidden">Загрузка...</div>
-            <iframe id="generatedSite" class="hidden"></iframe>
             <button id="copyBtn" class="hidden">Скопировать HTML</button>
         </section>
 
@@ -76,7 +75,7 @@
         </section>
 
         <footer>
-            <p>&copy; 2025 AIexplorer. Все права защищены.</p>
+            <p>&copy; 2023 AIexplorer. Все права защищены.</p>
         </footer>
 
         <!-- Уведомления -->
@@ -85,9 +84,6 @@
     </main>
 
     <!-- JavaScript -->
-    <script src="JSscript.js"></script>
-
-    <!-- Встраиваемый JavaScript -->
     <script type="text/javascript">
       document.getElementById('generateBtn').addEventListener('click', generateSite);
       document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
@@ -103,7 +99,7 @@
           document.getElementById('loader').style.display = 'block';
 
           try {
-              const response = await fetch('https://api.example.com/generate', { "AIzaSyBy9iTyELfMAZUTh4xiu0l1htRXE4MU3tA"
+              const response = await fetch('https://api.example.com/generate', { AIzaSyBy9iTyELfMAZUTh4xiu0l1htRXE4MU3tA
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ description })
@@ -113,8 +109,10 @@
 
               const data = await response.json();
 
-              document.getElementById('generatedSite').srcdoc = data.html; // Предполагается, что API возвращает HTML
-              document.getElementById('generatedSite').classList.remove('hidden');
+              // Открываем новое окно и вставляем сгенерированный HTML
+              const newWindow = window.open();
+              newWindow.document.write(data.html); // Предполагается, что API возвращает HTML
+              newWindow.document.close(); // Закрываем поток документа
 
               // Сохранение в историю
               saveToHistory(description);
@@ -159,9 +157,5 @@
       }
     </script>
 
-</body>
-</html>
-
-    </script>
 </body>
 </html>
