@@ -1,3 +1,7 @@
+Конечно, вот обновленный код с улучшениями стиля и одной кнопкой на карточку:
+
+HTML
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,88 +12,114 @@
         body {
             margin: 0;
             overflow: hidden; /* Чтобы анимация чёрной дыры была фоном */
-            font-family: sans-serif;
-            background-color: black; /* Основной цвет фона */
-            color: white; /* Основной цвет текста */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Более современный шрифт */
+            background-color: #121212; /* Более глубокий чёрный */
+            color: #f0f0f0; /* Светло-серый текст для лучшей читаемости */
             display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Анимация чёрной дыры (можно заменить настоящей анимацией) */
+        /* Улучшенная анимация чёрной дыры */
         #black-hole {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 70%, black 100%); /* Пример градиента, замени на реальную анимацию */
+            background: radial-gradient(circle, rgba(0,0,0,0) 0%, rgba(30,30,30,0.8) 70%, #121212 100%); /* Более плавная градиент */
             z-index: -1; /* Помещаем за контент */
+            animation: pulse 5s infinite alternate; /* Добавляем пульсирующую анимацию */
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
         }
 
         /* Шапка сайта */
         header {
             position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 2em;
+            top: 20px; /* Немного больше отступ сверху */
+            left: 20px; /* Немного больше отступ слева */
+            font-size: 2.5em; /* Увеличили размер шрифта */
             font-weight: bold;
-            background: linear-gradient(to right, #00FFFF, #0000FF); /* Голубой к синему */
+            background: linear-gradient(to right, #00FFFF, #8A2BE2); /* Бирюзовый к фиолетовому - более современно */
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Добавили тень для объёма */
         }
 
         /* Контейнер для карточек */
         .card-container {
             display: flex;
-            justify-content: space-around;
-            padding: 20px;
+            justify-content: center; /* Центрируем карточки */
+            gap: 30px; /* Увеличили расстояние между карточками */
+            padding: 40px; /* Увеличили внутренний отступ */
+            flex-wrap: wrap; /* Чтобы карточки переносились на новую строку при необходимости */
             flex-grow: 1;
+            align-items: center; /* Центрируем по вертикали */
         }
 
         /* Карточка */
         .card {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 20px;
-            border-radius: 10px;
-            width: 25%;
+            background-color: #212121; /* Более тёмный фон карточки */
+            padding: 30px; /* Увеличили внутренний отступ */
+            border-radius: 15px; /* Более скругленные углы */
+            width: 300px; /* Фиксированная ширина для единообразия */
             text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Улучшили эффект перехода */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7); /* Более выраженная тень */
+            border: 1px solid #333; /* Добавили тонкую границу */
         }
 
         .card:hover {
-            transform: scale(0.95);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            border: 2px solid white;
+            transform: translateY(-5px); /* Поднимаем карточку при наведении */
+            box-shadow: 0 10px 25px rgba(0, 173, 169, 0.5); /* Изменили цвет тени при наведении */
+            border-color: #00ADB5; /* Изменили цвет границы при наведении */
+        }
+
+        .card h3 {
+            color: #eee; /* Светлый цвет заголовка */
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.8em;
         }
 
         /* Кнопка в карточке */
         .card button {
-            background-color: transparent;
-            color: white;
-            border: 2px solid white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            background-color: #00ADB5; /* Привлекательный цвет кнопки */
+            color: #fff; /* Белый текст на кнопке */
+            border: none; /* Убрали границу кнопки */
+            padding: 12px 30px; /* Увеличили размер кнопки */
+            border-radius: 8px; /* Более скругленные углы кнопки */
             cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            font-size: 1em;
+            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out; /* Плавные переходы */
         }
 
         .card button:hover {
-            background-color: white;
-            color: black;
+            background-color: #008080; /* Более тёмный оттенок при наведении */
+            transform: scale(1.05); /* Небольшое увеличение при наведении */
         }
 
         /* Подвал сайта */
         footer {
             text-align: center;
-            padding: 20px;
-            background-color: rgba(0, 0, 0, 0.7);
+            padding: 30px;
+            background-color: #212121; /* Согласованный цвет фона */
+            color: #777; /* Более приглушенный цвет текста */
+            border-top: 1px solid #333; /* Добавили верхнюю границу */
         }
 
         footer a {
-            color: #00FFFF;
+            color: #00ADB5; /* Акцентный цвет ссылки */
             text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+
+        footer a:hover {
+            color: #008080;
         }
     </style>
 </head>
@@ -102,23 +132,20 @@
     <div class="card-container">
         <div class="card">
             <h3>Карточка 1</h3>
-            <button>Кнопка 1</button>
-            <button>Кнопка 2</button>
+            <button>Подробнее</button>
         </div>
         <div class="card">
             <h3>Карточка 2</h3>
-            <button>Кнопка 1</button>
-            <button>Кнопка 2</button>
+            <button>Подробнее</button>
         </div>
         <div class="card">
             <h3>Карточка 3</h3>
-            <button>Кнопка 1</button>
-            <button>Кнопка 2</button>
+            <button>Подробнее</button>
         </div>
     </div>
 
     <footer>
-        Zero studio. Made by <a href="https://t.me/YAYRIRZ">@YAYRIRZ</a>
+        Zero studio. Made by <a href="https://t.me/YAYRIRZ" target="_blank">@YAYRIRZ</a>
     </footer>
 
 </body>
