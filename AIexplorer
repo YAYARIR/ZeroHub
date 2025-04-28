@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIexplorer - Ваш AI Ассистент для Сайтов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <style>
+        :root {
+            --primary-color: #4285F4; /* Google Blue */
+            --secondary-color: #34A853; /* Google Green */
+            --tertiary-color: #FBBC05; /* Google Yellow */
+            --quaternary-color: #EA4335; /* Google Red */
+            --background-color: #ffffff;
+            --text-color: #202124; /* Dark Grey */
+            --light-text-color: #5f6368; /* Medium Grey */
+            --border-color: #dadce0; /* Light Grey */
+            --hover-color: #f8f9fa; /* Very Light Grey */
+            --focus-ring-color: rgba(66, 133, 244, 0.4);
+        }
+
+        body {
+            font-family: 'Google Sans', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden; /* Предотвращает горизонтальный скролл */
+        }
+
+        header {
+            background-color: var(--background-color);
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo span:nth-child(1) { color: var(--primary-color); }
+        .logo span:nth-child(2) { color: var(--quaternary-color); }
+        .logo span:nth-child(3) { color: var(--tertiary-color); }
+        .logo span:nth-child(4) { color: var(--primary-color); }
+        .logo span:nth-child(5) { color: var(--secondary-color); }
+        .logo span:nth-child(6) { color: var(--quaternary-color); }
+
+
+        nav {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            margin-left: 20px;
+            color: var(--light-text-color);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--text-color);
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-weight: normal;
+        }
+
+        .hero-section p {
+            font-size: 20px;
+            color: var(--light-text-color);
+            margin-bottom: 30px;
+            max-width: 700px;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 10px 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .search-box:hover {
+            box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+            border-color: transparent;
+        }
+
+        .search-box input[type="text"] {
+            flex-grow: 1;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            padding: 0 10px;
+        }
+
+        .search-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--light-text-color);
+            margin-right: 10px;
+        }
+
+        .mic-icon svg, .camera-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--primary-color);
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .buttons {
+            margin-top: 30px;
+        }
+
+        .button {
+            background-color: var(--hover-color);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: var(--text-color);
+            font-size: 14px;
+            padding: 10px 15px;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .button:hover {
+            border-color: var(--border-color);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .button:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .google-signin {
+            margin-left: 20px;
+            display: inline-block;
+        }
+
+        .google-signin div {
+             width: 120px !important; /* Adjust width as needed */
+        }
+
+
+        footer {
+            background-color: var(--hover-color);
+            color: var(--light-text-color);
+            font-size: 14px;
+            padding: 15px 25px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .history-section {
+            margin-top: 40px;
+            max-width: 800px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .history-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .history-list li {
+            background-color: var(--hover-color);
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: var(--light-text-color);
+        }
+
+        @media (max-width: 768px) {
+             header {
+                 flex-direction: column;
+                 padding: 10px 15px;
+             }
+
+             .logo {
+                 margin-bottom: 10px;
+             }
+
+             nav {
+                 margin-top: 10px;
+                 flex-direction: column;
+                 align-items: flex-start;
+             }
+
+             nav a {
+                 margin: 5px 0;
+             }
+
+            .google-signin {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .hero-section h1 {
+                font-size: 36px;
+            }
+
+            .hero-section p {
+                font-size: 18px;
+            }
+
+            .search-box {
+                padding: 8px 15px;
+            }
+
+            .search-box input[type="text"] {
+                font-size: 14px;
+            }
+
+            .search-icon svg, .mic-icon svg, .camera-icon svg {
+                 width: 18px;
+                 height: 18px;
+             }
+
+            .button {
+                font-size: 12px;
+                padding: 8px 12px;
+                margin: 0 3px;
+            }
+
+            footer {
+                padding: 10px 15px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span>A</span><span>I</span><span>e</span><span>x</span><span>p</span><span>l</span><span>o</span><span>r</span><span>e</span><span>r</span>
+        </div>
+        <nav>
+            <a href="#features">Особенности</a>
+            <a href="#how-it-works">Как это работает</a>
+            <a href="#contact">Контакты</a>
+             <div class="google-signin">
+                 <div id="g_id_onload"
+                      data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                      data-context="signin"
+                      data-ux_mode="popup"
+                      data-callback="handleCredentialResponse"
+                      data-auto_prompt="false">
+                 </div>
+
+                 <div class="g_id_signin"
+                      data-type="standard"
+                      data-shape="rectangular"
+                      data-theme="outline"
+                      data-text="signin_with"
+                      data-size="small"
+                      data-logo_alignment="left">
+                 </div>
+             </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <h1>Создавайте потрясающие сайты легко</h1>
+            <p>AIexplorer использует передовые нейронные сети, чтобы превратить ваши идеи в красивые и функциональные веб-сайты всего за несколько кликов.</p>
+
+            <div class="search-container">
+                <div class="search-box">
+                     <span class="search-icon">
+                         <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                     </span>
+                    <input type="text" id="siteDescription" placeholder="Опишите сайт, который вы хотите создать...">
+                     <span class="mic-icon">
+                         <svg class="goxjub" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285f4" d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.34-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z"></path><path fill="#34a853" d="m11.99 18.01c-2.5 0-4.51-2.01-4.51-4.5v-5.5h-1.5v5.5c0 3.38 2.72 6.11 6.1 6.11s6.1-2.73 6.1-6.11v-5.5h-1.5v5.5c0 2.49-2.02 4.5-4.51 4.5z"></path><path fill="#fbbc05" d="m8.58 20.02h6.84v0.03c0 2.42-1.97 4.38-4.39 4.38h-0.03c-2.42 0-4.39-1.96-4.39-4.38v-0.03z"></path><path fill="#ea4335" d="m12 17.98c-1.42 0-2.8-.19-3.98-.58v1.51c1.39.36 2.9.57 4.48.57 1.58 0 3.09-.21 4.48-.57v-1.51c-1.18.39-2.56.58-3.98.58z"></path></svg>
+                     </span>
+                     <span class="camera-icon">
+                        <svg class="n8Qv0" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m10 16.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5zm5-1.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm6.1-.89v-1.7l-2.28-2.27c-.59-.58-1.54-.58-2.12 0l-2.35 2.35-1.5-1.51c-.58-.57-1.54-.57-2.12.01l-2.34 2.36L3.83 9H5.5c.83 0 1.5-.67 1.5-1.5V6h3v1.5c0 .83.67 1.5 1.5 1.5h3c.83 0 1.5-.67 1.5-1.5V6h3v1.5c0 .83.67 1.5 1.5 1.5H20c.66 0 1.1-.82.78-1.44l-2.88-5.51C17.41 1.75 16.47 1 15.4 1H8.59c-1.08 0-2.02.75-2.4 1.45l-2.89 5.5C3 8.18 3.44 9 4.1 9H5.5v1.5c0 .83-.67 1.5-1.5 1.5H2c-.66 0-1.1.82-.78 1.44l2.88 5.51c.37.69 1.31 1.45 2.39 1.45h6.81c1.08 0 2.02-.75 2.4-1.45l2.88-5.5c.33-.62-.11-1.44-.77-1.44z"></path></svg>
+                     </span>
+                </div>
+                 <div class="buttons">
+                     <button class="button" onclick="generateSite()">Сгенерировать сайт</button>
+                     <button class="button" onclick="surpriseMe()">Мне повезет!</button>
+                 </div>
+            </div>
+        </section>
+         <!-- Секции для контента могут быть добавлены ниже -->
+         <section id="features" style="margin-top: 60px; max-width: 800px;">
+            <h2>Особенности AIexplorer</h2>
+             <p>AIexplorer предлагает ряд мощных функций, которые упрощают создание веб-сайтов:</p>
+             <ul>
+                 <li>Генерация кода HTML/CSS/JS по текстовому описанию.</li>
+                 <li>Адаптивный дизайн по умолчанию для всех устройств.</li>
+                 <li>Минималистичный и стильный дизайн.</li>
+                 <li>Автоматическое добавление базовой структуры сайта (хедер, футер, главная секция).</li>
+                 <li>Возможность включения изображений и SVG (при наличии подходящих запросов и ресурсов).</li>
+                 <li>Интуитивно понятный интерфейс.</li>
+             </ul>
+         </section>
+
+        <section id="how-it-works" style="margin-top: 60px; max-width: 800px;">
+             <h2>Как это работает?</h2>
+             <p>Просто опишите сайт, который вы хотите получить, в текстовом поле. Например:</p>
+             <p style="font-style: italic; color: var(--light-text-color);">"Создай одностраничный сайт для кофейни в современном стиле с меню и контактной формой."</p>
+             <p>Наша нейросеть проанализирует ваш запрос и сгенерирует готовый код HTML, CSS и JavaScript, который вы сможете сразу использовать.</p>
+        </section>
+
+        <section id="contact" style="margin-top: 60px; max-width: 800px; margin-bottom: 60px;">
+             <h2>Контакты</h2>
+             <p>Есть вопросы или предложения? Свяжитесь с нами!</p>
+             <p>Email: <a href="mailto:info@aiexplorer.com" style="color: var(--primary-color); text-decoration: none;">info@aiexplorer.com</a></p>
+             <!-- Можно добавить форму обратной связи здесь -->
+        </section>
+
+         <section id="history" class="history-section" style="display: none;">
+             <h2>История запросов</h2>
+             <ul id="historyList" class="history-list">
+                 <!-- История будет загружаться сюда -->
+             </ul>
+         </section>
+
+    </main>
+
+    <footer>
+        &copy; 2023 AIexplorer. Все права защищены.
+    </footer>
+
+    <script>
+        let currentUser = null;
+
+        function handleCredentialResponse(response) {
+            // Отправьте токен на ваш сервер для верификации и аутентификации
+            const responsePayload = parseJwt(response.credential);
+            console.log("ID: " + responsePayload.sub);
+            console.log('Full Name: ' + responsePayload.name);
+            console.log('Given Name: ' + responsePayload.given_name);
+            console.log('Family Name: ' + responsePayload.family_name);
+            console.log("Image URL: " + responsePayload.picture);
+            console.log("Email: " + responsePayload.email);
+
+            currentUser = {
+                id: responsePayload.sub,
+                name: responsePayload.name,
+                email: responsePayload.email
+            };
+
+            // Сохранить пользователя в localStorage или sessionStorage
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+            // Обновить интерфейс (например, показать историю, скрыть кнопку входа)
+            updateUIForUser();
+
+            // Загрузить историю запросов для этого пользователя
+            loadHistory(currentUser.id);
+        }
+
+        function parseJwt(token) {
+            var base64Url = token.split('.')[1];
+            var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        }
+
+        function updateUIForUser() {
+            const signInButton = document.querySelector('.g_id_signin');
+            const historySection = document.getElementById('history');
+
+            if (currentUser) {
+                signInButton.style.display = 'none';
+                historySection.style.display = 'block';
+            } else {
+                signInButton.style.display = 'block';
+                historySection.style.display = 'none';
+            }
+        }
+
+        function loadHistory(userId) {
+            // В реальном приложении здесь был бы AJAX-запрос к вашему серверу
+            // с userId для получения истории запросов пользователя.
+            // Пример загрузки из LocalStorage (для демонстрации):
+            const history = JSON.parse(localStorage.getItem(`history_${userId}`) || '[]');
+            displayHistory(history);
+        }
+
+        function saveHistory(userId, query) {
+            // В реальном приложении здесь был бы AJAX-запрос к вашему серверу
+            // для сохранения запроса в базу данных пользователя.
+            // Пример сохранения в LocalStorage (для демонстрации):
+            const history = JSON.parse(localStorage.getItem(`history_${userId}`) || '[]');
+            history.push({ query: query, timestamp: new Date().toISOString() });
+            localStorage.setItem(`history_${userId}`, JSON.stringify(history));
+            displayHistory(history); // Обновить отображение истории
+        }
+
+        function displayHistory(history) {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = ''; // Очистить текущий список
+            history.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.query} (${new Date(item.timestamp).toLocaleString()})`;
+                historyList.appendChild(li);
+            });
+        }
+
+
+        function generateSite() {
+            const input = document.getElementById('siteDescription');
+            const query = input.value.trim();
+            if (query === "") {
+                alert("Пожалуйста, опишите сайт, который вы хотите создать.");
+            } else {
+                 alert("Запрос на генерацию сайта: '" + query + "' отправлен. (В реальной нейросети здесь была бы генерация)");
+                 // Здесь должен быть код, отправляющий запрос нейросети и отображающий результат
+
+                 // Если пользователь вошел, сохраняем запрос в историю
+                 if (currentUser) {
+                     saveHistory(currentUser.id, query);
+                 }
+            }
+        }
+
+        function surpriseMe() {
+             const query = "Сгенерируй случайный красивый сайт";
+             alert("Вам повезет! Генерирую случайный красивый сайт... (В реальной нейросети здесь была бы генерация)");
+             // Здесь должен быть код, отправляющий запрос нейросети для случайного сайта и отображающий результат
+
+             // Если пользователь вошел, сохраняем запрос в историю
+             if (currentUser) {
+                 saveHistory(currentUser.id, query);
+             }
+        }
+
+        // Добавление слушателей событий для иконок (имитация работы)
+        document.querySelector('.mic-icon').addEventListener('click', () => {
+             alert("Идет прослушивание... (Имитация голосового ввода)");
+        });
+
+        document.querySelector('.camera-icon').addEventListener('click', () => {
+             alert("Загрузите изображение или сделайте снимок... (Имитация визуального ввода)");
+        });
+
+        // Проверить при загрузке страницы, вошел ли пользователь
+        document.addEventListener('DOMContentLoaded', () => {
+            const storedUser = localStorage.getItem('currentUser');
+            if (storedUser) {
+                currentUser = JSON.parse(storedUser);
+                updateUIForUser();
+                loadHistory(currentUser.id);
+            } else {
+                updateUIForUser(); // Скрыть секцию истории, если пользователь не вошел
+            }
+        });
+    </script>
+</body>
+</html>
