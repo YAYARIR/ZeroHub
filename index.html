@@ -83,75 +83,104 @@
             border: none; /* Убрали границу кнопки */
             padding: 12px 30px; /* Увеличили размер кнопки */
             border-radius: 8px; /* Более скругленные углы кнопки */
-            cursor: pointer;
-            font-size: 1em;
-            transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out; /* Плавные переходы */
-        }
-        .card button:hover {
-            background-color: #008080; /* Более тёмный оттенок при наведении */
-            transform: scale(1.05); /* Небольшое увеличение при наведении */
-        }
-        /* Подвал сайта */
-        footer {
-            text-align: center;
-            padding: 30px;
-            background-color: #212121; /* Согласованный цвет фона */
-            color: #777; /* Более приглушенный цвет текста */
-            border-top: 1px solid #333; /* Добавили верхнюю границу */
-        }
-        footer a {
-            color: #00ADB5; /* Акцентный цвет ссылки */
-            text-decoration: none;
-            transition: color 0.3s ease-in-out;
-        }
-        footer a:hover {
-            color: #008080;
-        }
+            cursor:pointer;
+           font-size :1em ;
+           transition :background-color .3s ease-in-out , transform .2s ease-in-out ;/* Плавные переходы */ 
+       } 
+       .card button:hover { 
+           background-color :#008080 ;/* Более тёмный оттенок при наведении */ 
+           transform :scale(1.05) ;/* Небольшое увеличение при наведении */ 
+       } 
+       footer { 
+           text-align :center ; 
+           padding :30px ; 
+           background-color :#212121 ;/* Согласованный цвет фона */ 
+           color :#777 ;/* Более приглушенный цвет текста */ 
+           border-top :1px solid #333 ;/* Добавили верхнюю границу */ 
+       } 
+       footer a { 
+           color :#00ADB5 ;/* Акцентный цвет ссылки */ 
+           text-decoration :none ; 
+           transition :color .3s ease-in-out ; 
+       } 
+       footer a:hover { 
+           color :#008080 ; 
+       }
 
-        /* Медиа-запрос для экранов шириной до 768px (обычно мобильные устройства) */
-        @media (max-width: 768px) {
-            header {
-                font-size: 2em; /* Уменьшаем размер шрифта заголовка на мобильных */
-                top: 15px;
-                left: 15px;
-            }
-            .card-container {
-                margin-top: 60px; /* Уменьшаем отступ сверху для карточек на мобильных */
-                padding: 20px; /* Уменьшаем внутренний отступ контейнера на мобильных */
-            }
-            .card {
-                width: 90%; /* Карточки занимают большую часть ширины экрана на мобильных */
-                margin-bottom: 20px; /* Добавляем отступ снизу между карточками на мобильных */
-            }
-            .card:last-child {
-                margin-bottom: 0; /* Убираем отступ у последней карточки */
-            }
-            .card button {
-                padding: 10px 25px; /* Немного уменьшаем размер кнопки на мобильных */
-                font-size: 0.9em;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div id="black-hole"></div>
-    <header>Zero Studio</header>
-    <div class="card-container">
-        <div class="card">
-            <h3>Zero music</h3>
-            <button onclick="window.location.href='https://zestudio.netlify.app/music'">Перейти</button>
-        </div>
-        <div class="card">
-            <h3>Telegram</h3>
-            <button onclick="window.location.href='https://t.me/studiozeros'">Перейти</button>
-        </div>
-        <div class="card">
-            <h3>Deb AI</h3>
-            <button onclick="window.location.href='https://t.me/debai_bot'">Перейти</button>
-        </div>
-    </div>
-    <footer>
-    © 2025 Zero Music. открытый сайт без авторских прав. сделал <a href="https://t.me/YAYRIRZ" target="_blank">@YAYRIRZ</a>
-    </footer>
+       .donate-button {
+           position:absolute ;
+           bottom :20px ;
+           right :20px ;
+           background-color :#4CAF50 ;/* Зеленый цвет */ 
+           border:none ;
+           color:white ;
+           padding :15px30 px ;
+           text-align:center ;
+           text-decoration:none ;
+           display:inline-block ;
+           font-size :18 px ;
+          cursor:pointer ;
+          border-radius :25 px ;/* Закругленные углы */  
+          box-shadow :04 px8 px rgba(0 ,0 ,0 ,0.2) ;/* Тень */  
+          transition :background-color .3 s , transform .3 s ;/* Плавный переход */  
+      } 
+
+      .donate-button:hover {  
+          background-color:#45a049 ;/* Темнее при наведении */  
+          transform :translateY(-2 px) ;/* Подъем кнопки при наведении */  
+      } 
+
+      .donate-button :active {  
+          transform :translateY(1 px) ;/* Опускание кнопки при нажатии */  
+      }
+
+      @media (max-width :768 px) {  
+          header {  
+              font-size :2 em ;/* Уменьшаем размер шрифта заголовка на мобильных */  
+              top :15 px ;  
+              left :15 px ;  
+          }  
+          .card-container {  
+              margin-top :60 px ;/* Уменьшаем отступ сверху для карточек на мобильных */  
+              padding :20 px ;/* Уменьшаем внутренний отступ контейнера на мобильных */  
+          }  
+          .card {  
+              width :90 % ;/* Карточки занимают большую часть ширины экрана на мобильных */  
+              margin-bottom :20 px ;/* Добавляем отступ снизу между карточками на мобильных */  
+          }  
+          .card:last-child {  
+              margin-bottom :0 ;/* Убираем отступ у последней карточки */  
+          }   
+          .card button {   
+              padding :10 px25 px ;/* Немного уменьшаем размер кнопки на мобильных */   
+              font-size :.9 em ;   
+          }   
+      }   
+   </style>   
+</head>   
+<body>   
+   <div id="black-hole"></div>   
+   <header>Zero Studio</header>   
+   <div class="card-container">   
+       <div class="card">   
+           <h3>Zero music</h3>   
+           <button onclick="window.location.href='https://zestudio.netlify.app/music'">Перейти</button>   
+       </div>   
+       <div class="card">   
+           <h3>Telegram</h3>   
+           <button onclick="window.location.href='https://t.me/studiozeros'">Перейти</button>   
+       </div>   
+       <div class="card">   
+           <h3>Deb AI</h3>   
+           <button onclick="window.location.href='https://t.me/debai_bot'">Перейти</button>   
+       </div>    
+   </div>    
+   <footer>    
+   ©2025 Zero Music. открытый сайт без авторских прав. сделал<a href="https://t.me/YAYRIRZ" target="_blank">@YAYRIRZ</a>    
+   </footer>
+
+   <!-- Кнопка "Поддержать" -->
+   <a href="https://example.com/donate" class="donate-button" target="_blank">Поддержать</a>
+
 </body>
 </html>
