@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                                                               <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -46,18 +46,12 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: var(--primary-color);
+            color: var(--primary-color); /* Логотип теперь полностью голубой */
             display: flex;
             align-items: center;
         }
 
-        .logo span:nth-child(1) { color: var(--primary-color); }
-        .logo span:nth-child(2) { color: var(--quaternary-color); }
-        .logo span:nth-child(3) { color: var(--tertiary-color); }
-        .logo span:nth-child(4) { color: var(--primary-color); }
-        .logo span:nth-child(5) { color: var(--secondary-color); }
-        .logo span:nth-child(6) { color: var(--quaternary-color); }
-
+        /* Удалены специфичные цвета для букв логотипа */
 
         nav {
             display: flex;
@@ -82,9 +76,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start; /* Изменено для размещения контента сверху */
             padding: 40px 20px;
             text-align: center;
+        }
+
+        .hero-section {
+            margin-bottom: 40px; /* Добавлен отступ */
         }
 
         .hero-section h1 {
@@ -181,6 +179,52 @@
              width: 120px !important; /* Adjust width as needed */
         }
 
+        .generated-site-container {
+            margin-top: 40px;
+            width: 100%;
+            max-width: 800px; /* Или другая подходящая ширина */
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: none; /* Скрыт по умолчанию */
+            text-align: left; /* Выравнивание текста внутри контейнера */
+        }
+
+        .generated-site-container h2 {
+            padding: 15px 20px;
+            margin: 0;
+            background-color: var(--hover-color);
+            border-bottom: 1px solid var(--border-color);
+            font-size: 20px;
+            color: var(--text-color);
+        }
+
+        .generated-site-preview {
+            width: 100%;
+            height: 400px; /* Задайте подходящую высоту */
+            border: none;
+            background-color: #f0f0f0; /* Легкий фон для iframe */
+        }
+
+        .copy-code-button {
+            display: block; /* Делаем кнопку блочной для выравнивания */
+            width: fit-content; /* Ширина по контенту */
+            margin: 20px auto; /* Центрирование кнопки */
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .copy-code-button:hover {
+            background-color: #357ae8; /* Более темный синий */
+        }
+
 
         footer {
             background-color: var(--hover-color);
@@ -212,6 +256,24 @@
             font-size: 14px;
             color: var(--light-text-color);
         }
+
+         /* Loader styles */
+        .loader {
+             border: 4px solid var(--hover-color);
+             border-top: 4px solid var(--primary-color);
+             border-radius: 50%;
+             width: 40px;
+             height: 40px;
+             animation: spin 1s linear infinite;
+             margin: 20px auto; /* Центрирование */
+             display: none; /* Скрыт по умолчанию */
+         }
+
+         @keyframes spin {
+             0% { transform: rotate(0deg); }
+             100% { transform: rotate(360deg); }
+         }
+
 
         @media (max-width: 768px) {
              header {
@@ -265,6 +327,11 @@
                 margin: 0 3px;
             }
 
+            .generated-site-preview {
+                 height: 300px; /* Уменьшаем высоту на мобильных */
+             }
+
+
             footer {
                 padding: 10px 15px;
                 font-size: 12px;
@@ -275,7 +342,7 @@
 <body>
     <header>
         <div class="logo">
-            <span>A</span><span>I</span><span>e</span><span>x</span><span>p</span><span>l</span><span>o</span><span>r</span><span>e</span><span>r</span>
+            AIexplorer
         </div>
         <nav>
             <a href="#features">Особенности</a>
@@ -326,8 +393,18 @@
                  </div>
             </div>
         </section>
+
+         <div class="loader" id="loader"></div> <!-- Добавлен индикатор загрузки -->
+
+         <div class="generated-site-container" id="generatedSiteContainer">
+             <h2>Сгенерированный сайт</h2>
+             <iframe class="generated-site-preview" id="generatedSitePreview" srcdoc=""></iframe>
+             <button class="copy-code-button" onclick="copyGeneratedCode()" id="copyCodeButton">Скопировать HTML код</button>
+         </div>
+
+
          <!-- Секции для контента могут быть добавлены ниже -->
-         <section id="features" style="margin-top: 60px; max-width: 800px;">
+         <section id="features" style="margin-top: 60px; max-width: 800px; text-align: left;">
             <h2>Особенности AIexplorer</h2>
              <p>AIexplorer предлагает ряд мощных функций, которые упрощают создание веб-сайтов:</p>
              <ul>
@@ -340,14 +417,14 @@
              </ul>
          </section>
 
-        <section id="how-it-works" style="margin-top: 60px; max-width: 800px;">
+        <section id="how-it-works" style="margin-top: 60px; max-width: 800px; text-align: left;">
              <h2>Как это работает?</h2>
              <p>Просто опишите сайт, который вы хотите получить, в текстовом поле. Например:</p>
              <p style="font-style: italic; color: var(--light-text-color);">"Создай одностраничный сайт для кофейни в современном стиле с меню и контактной формой."</p>
              <p>Наша нейросеть проанализирует ваш запрос и сгенерирует готовый код HTML, CSS и JavaScript, который вы сможете сразу использовать.</p>
         </section>
 
-        <section id="contact" style="margin-top: 60px; max-width: 800px; margin-bottom: 60px;">
+        <section id="contact" style="margin-top: 60px; max-width: 800px; margin-bottom: 60px; text-align: left;">
              <h2>Контакты</h2>
              <p>Есть вопросы или предложения? Свяжитесь с нами!</p>
              <p>Email: <a href="mailto:info@aiexplorer.com" style="color: var(--primary-color); text-decoration: none;">info@aiexplorer.com</a></p>
@@ -367,11 +444,16 @@
         &copy; 2023 AIexplorer. Все права защищены.
     </footer>
 
-    <script>
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai";
+
+        // Replace with your actual API key
+        const API_KEY = "YOUR_GEMINI_API_KEY"; // <-- ЗАМЕНИТЕ НА ВАШ КЛЮЧ API GEMINI
+
         let currentUser = null;
+        let lastGeneratedCode = ""; // Переменная для хранения последнего сгенерированного кода
 
         function handleCredentialResponse(response) {
-            // Отправьте токен на ваш сервер для верификации и аутентификации
             const responsePayload = parseJwt(response.credential);
             console.log("ID: " + responsePayload.sub);
             console.log('Full Name: ' + responsePayload.name);
@@ -386,13 +468,8 @@
                 email: responsePayload.email
             };
 
-            // Сохранить пользователя в localStorage или sessionStorage
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-            // Обновить интерфейс (например, показать историю, скрыть кнопку входа)
             updateUIForUser();
-
-            // Загрузить историю запросов для этого пользователя
             loadHistory(currentUser.id);
         }
 
@@ -402,7 +479,6 @@
             var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
                 return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
             }).join(''));
-
             return JSON.parse(jsonPayload);
         }
 
@@ -420,26 +496,20 @@
         }
 
         function loadHistory(userId) {
-            // В реальном приложении здесь был бы AJAX-запрос к вашему серверу
-            // с userId для получения истории запросов пользователя.
-            // Пример загрузки из LocalStorage (для демонстрации):
             const history = JSON.parse(localStorage.getItem(`history_${userId}`) || '[]');
             displayHistory(history);
         }
 
         function saveHistory(userId, query) {
-            // В реальном приложении здесь был бы AJAX-запрос к вашему серверу
-            // для сохранения запроса в базу данных пользователя.
-            // Пример сохранения в LocalStorage (для демонстрации):
             const history = JSON.parse(localStorage.getItem(`history_${userId}`) || '[]');
             history.push({ query: query, timestamp: new Date().toISOString() });
             localStorage.setItem(`history_${userId}`, JSON.stringify(history));
-            displayHistory(history); // Обновить отображение истории
+            displayHistory(history);
         }
 
         function displayHistory(history) {
             const historyList = document.getElementById('historyList');
-            historyList.innerHTML = ''; // Очистить текущий список
+            historyList.innerHTML = '';
             history.forEach(item => {
                 const li = document.createElement('li');
                 li.textContent = `${item.query} (${new Date(item.timestamp).toLocaleString()})`;
@@ -447,33 +517,103 @@
             });
         }
 
-
-        function generateSite() {
+        async function generateSite() {
             const input = document.getElementById('siteDescription');
             const query = input.value.trim();
+            const generatedSiteContainer = document.getElementById('generatedSiteContainer');
+            const loader = document.getElementById('loader');
+            const previewFrame = document.getElementById('generatedSitePreview');
+            const copyButton = document.getElementById('copyCodeButton');
+
             if (query === "") {
                 alert("Пожалуйста, опишите сайт, который вы хотите создать.");
-            } else {
-                 alert("Запрос на генерацию сайта: '" + query + "' отправлен. (В реальной нейросети здесь была бы генерация)");
-                 // Здесь должен быть код, отправляющий запрос нейросети и отображающий результат
+                return;
+            }
 
-                 // Если пользователь вошел, сохраняем запрос в историю
-                 if (currentUser) {
-                     saveHistory(currentUser.id, query);
-                 }
+            // Показать индикатор загрузки
+            loader.style.display = 'block';
+            generatedSiteContainer.style.display = 'none'; // Скрыть предыдущий результат
+
+            try {
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+                // Составьте промт для Gemini
+                const prompt = `Сгенерируй HTML, CSS и JavaScript код для одностраничного веб-сайта по следующему описанию: "${query}".
+                Предоставь только полный HTML код, включая теги <style> для CSS и <script> для JavaScript внутри <head> или <body>, но без использования внешних файлов.
+                Убедись, что код валидный и содержит только один тег <html>.
+                Примерный формат ответа:
+                ```html
+                <!DOCTYPE html>
+                <html lang="ru">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Название сайта</title>
+                    <style>
+                        /* CSS стили */
+                    </style>
+                </head>
+                <body>
+                    <!-- Содержимое сайта -->
+                    <script>
+                        // JavaScript код
+                    </script>
+                </body>
+                </html>
+                ```
+                `; // Добавьте более детальные инструкции, если нужно
+
+                const result = await model.generateContent(prompt);
+                const response = await result.response;
+                let text = response.text();
+
+                // Очистка от возможных лишних символов и форматирования
+                text = text.replace(/```html
+?/, '').replace(/
+?```/, '').trim();
+                lastGeneratedCode = text; // Сохраняем сгенерированный код
+
+                // Отобразить сгенерированный сайт в iframe
+                previewFrame.srcdoc = text;
+
+                // Показать контейнер с сайтом и кнопкой
+                generatedSiteContainer.style.display = 'block';
+
+                // Если пользователь вошел, сохраняем запрос в историю
+                if (currentUser) {
+                    saveHistory(currentUser.id, query);
+                }
+
+            } catch (error) {
+                console.error("Ошибка при генерации сайта:", error);
+                alert("Не удалось сгенерировать сайт. Пожалуйста, попробуйте еще раз или измените запрос.");
+                generatedSiteContainer.style.display = 'none'; // Скрыть контейнер при ошибке
+            } finally {
+                // Скрыть индикатор загрузки
+                loader.style.display = 'none';
             }
         }
 
         function surpriseMe() {
-             const query = "Сгенерируй случайный красивый сайт";
-             alert("Вам повезет! Генерирую случайный красивый сайт... (В реальной нейросети здесь была бы генерация)");
-             // Здесь должен быть код, отправляющий запрос нейросети для случайного сайта и отображающий результат
-
-             // Если пользователь вошел, сохраняем запрос в историю
-             if (currentUser) {
-                 saveHistory(currentUser.id, query);
-             }
+             const query = "Сгенерируй случайный красивый одностраничный сайт в современном стиле.";
+             document.getElementById('siteDescription').value = query; // Заполняем поле ввода
+             generateSite(); // Запускаем генерацию
         }
+
+        function copyGeneratedCode() {
+            if (lastGeneratedCode) {
+                navigator.clipboard.writeText(lastGeneratedCode).then(() => {
+                    alert("HTML код скопирован в буфер обмена!");
+                }).catch(err => {
+                    console.error('Ошибка при копировании кода:', err);
+                    alert("Не удалось скопировать код. Пожалуйста, скопируйте вручную.");
+                });
+            } else {
+                alert("Нет сгенерированного кода для копирования.");
+            }
+        }
+
 
         // Добавление слушателей событий для иконок (имитация работы)
         document.querySelector('.mic-icon').addEventListener('click', () => {
@@ -495,6 +635,14 @@
                 updateUIForUser(); // Скрыть секцию истории, если пользователь не вошел
             }
         });
+
+        // Expose functions to global scope if needed by Google Sign-In
+        window.handleCredentialResponse = handleCredentialResponse;
+        window.generateSite = generateSite;
+        window.surpriseMe = surpriseMe;
+        window.copyGeneratedCode = copyGeneratedCode;
+
+
     </script>
 </body>
 </html>
