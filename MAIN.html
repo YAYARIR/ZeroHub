@@ -1,3 +1,9 @@
+Отлично! Чтобы карточки не "залазили" на надпись "Zero Studio" на мобильных устройствах, нам нужно адаптировать стили с помощью медиа-запросов (media queries) в CSS. Медиа-запросы позволяют применять определенные стили только при соблюдении определенных условий, например, при определенной ширине экрана.
+
+Вот обновленный код с добавленными медиа-запросами:
+
+HTML
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -15,7 +21,6 @@
             flex-direction: column;
             min-height: 100vh;
         }
-
         /* Улучшенная анимация чёрной дыры */
         #black-hole {
             position: fixed;
@@ -27,12 +32,10 @@
             z-index: -1; /* Помещаем за контент */
             animation: pulse 5s infinite alternate; /* Добавляем пульсирующую анимацию */
         }
-
         @keyframes pulse {
             0% { opacity: 0.8; }
             100% { opacity: 1; }
         }
-
         /* Шапка сайта */
         header {
             position: absolute;
@@ -44,8 +47,8 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Добавили тень для объёма */
+            z-index: 10; /* Чтобы шапка была над карточками */
         }
-
         /* Контейнер для карточек */
         .card-container {
             display: flex;
@@ -55,8 +58,8 @@
             flex-wrap: wrap; /* Чтобы карточки переносились на новую строку при необходимости */
             flex-grow: 1;
             align-items: center; /* Центрируем по вертикали */
+            margin-top: 80px; /* Добавили отступ сверху для контейнера карточек */
         }
-
         /* Карточка */
         .card {
             background-color: #212121; /* Более тёмный фон карточки */
@@ -68,20 +71,17 @@
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7); /* Более выраженная тень */
             border: 1px solid #333; /* Добавили тонкую границу */
         }
-
         .card:hover {
             transform: translateY(-5px); /* Поднимаем карточку при наведении */
             box-shadow: 0 10px 25px rgba(0, 173, 169, 0.5); /* Изменили цвет тени при наведении */
             border-color: #00ADB5; /* Изменили цвет границы при наведении */
         }
-
         .card h3 {
             color: #eee; /* Светлый цвет заголовка */
             margin-top: 0;
             margin-bottom: 15px;
             font-size: 1.8em;
         }
-
         /* Кнопка в карточке */
         .card button {
             background-color: #00ADB5; /* Привлекательный цвет кнопки */
@@ -93,12 +93,10 @@
             font-size: 1em;
             transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out; /* Плавные переходы */
         }
-
         .card button:hover {
             background-color: #008080; /* Более тёмный оттенок при наведении */
             transform: scale(1.05); /* Небольшое увеличение при наведении */
         }
-
         /* Подвал сайта */
         footer {
             text-align: center;
@@ -107,42 +105,59 @@
             color: #777; /* Более приглушенный цвет текста */
             border-top: 1px solid #333; /* Добавили верхнюю границу */
         }
-
         footer a {
             color: #00ADB5; /* Акцентный цвет ссылки */
             text-decoration: none;
             transition: color 0.3s ease-in-out;
         }
-
         footer a:hover {
             color: #008080;
+        }
+
+        /* Медиа-запрос для экранов шириной до 768px (обычно мобильные устройства) */
+        @media (max-width: 768px) {
+            header {
+                font-size: 2em; /* Уменьшаем размер шрифта заголовка на мобильных */
+                top: 15px;
+                left: 15px;
+            }
+            .card-container {
+                margin-top: 60px; /* Уменьшаем отступ сверху для карточек на мобильных */
+                padding: 20px; /* Уменьшаем внутренний отступ контейнера на мобильных */
+            }
+            .card {
+                width: 90%; /* Карточки занимают большую часть ширины экрана на мобильных */
+                margin-bottom: 20px; /* Добавляем отступ снизу между карточками на мобильных */
+            }
+            .card:last-child {
+                margin-bottom: 0; /* Убираем отступ у последней карточки */
+            }
+            .card button {
+                padding: 10px 25px; /* Немного уменьшаем размер кнопки на мобильных */
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
 <body>
-
     <div id="black-hole"></div>
-
     <header>Zero Studio</header>
-
     <div class="card-container">
         <div class="card">
             <h3>Zero music</h3>
-            <button>Перейти</button>
+            <button onclick="window.location.href='https://example.com/music'">Перейти</button>
         </div>
         <div class="card">
             <h3>Telegram</h3>
-            <button>Перейти</button>
+            <button onclick="window.location.href='https://t.me/your_telegram_channel'">Перейти</button>
         </div>
         <div class="card">
             <h3>Deb AI</h3>
-            <button>Перейти</button>
+            <button onclick="window.location.href='https://example.com/deb_ai'">Перейти</button>
         </div>
     </div>
-
     <footer>
         Zero studio. Made by <a href="https://t.me/YAYRIRZ" target="_blank">@YAYRIRZ</a>
     </footer>
-
 </body>
 </html>
