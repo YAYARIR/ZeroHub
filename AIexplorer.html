@@ -441,14 +441,14 @@
     </main>
 
     <footer>
-        &copy; 2023 AIexplorer. Все права защищены.
+        &copy; 2025 AIexplorer. Все права защищены. АХХАХАХА СДЕЛАНО AIexplorer.
     </footer>
 
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai";
 
         // Replace with your actual API key
-        const API_KEY = "YOUR_GEMINI_API_KEY"; // <-- ЗАМЕНИТЕ НА ВАШ КЛЮЧ API GEMINI
+        const API_KEY = "AIzaSyBy9iTyELfMAZUTh4xiu0l1htRXE4MU3tA"; // <-- ЗАМЕНИТЕ НА ВАШ КЛЮЧ API GEMINI
 
         let currentUser = null;
         let lastGeneratedCode = ""; // Переменная для хранения последнего сгенерированного кода
@@ -536,7 +536,7 @@
 
             try {
                 const genAI = new GoogleGenerativeAI(API_KEY);
-                const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+                const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
                 // Составьте промт для Gemini
                 const prompt = `Сгенерируй HTML, CSS и JavaScript код для одностраничного веб-сайта по следующему описанию: "${query}".
