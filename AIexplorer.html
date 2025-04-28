@@ -201,6 +201,7 @@
             border-bottom: 1px solid var(--border-color);
             font-size: 20px;
             color: var(--text-color);
+            display: none; /* Скрываем заголовок контейнера */
         }
 
         .generated-site-preview {
@@ -208,6 +209,7 @@
             height: 400px; /* Задайте подходящую высоту */
             border: none;
             background-color: #f0f0f0; /* Легкий фон для iframe */
+            display: none; /* Скрываем iframe */
         }
 
         .copy-code-button {
@@ -385,9 +387,9 @@
 
             <div class="search-container">
                 <div class="search-box">
-                           <span class="search-icon" onclick="generateAndCopySite()">
+                           <span class="search-icon" onclick="generateAndOpenSite()">
                                <svg focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
                            </span>
                          <input type="text" id="siteDescription" placeholder="Опишите сайт, который вы хотите создать...">
                            <span class="mic-icon">
-                               <svg class="goxjub" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285f4" d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.34-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z"></path><path fill="#34a853" d="m11.99 18.01c-2.5 0-4.51-2.01-4.51-4.5v-5.5h-1.5v5.5c0 3.38 2.72 6.11 6.1 6.11s6.1-2.73 6.1-6.11v-5.5h-1.5v5.5c0 2.49-2.02 4.5-4.51 4.5z"></path><path fill="#fbbc05" d="m8.58 20.02h6.84v0.03c0 2.42-1.97 4.38-4.39 4.38h-0.03c-2.42 0-4.39-1.96-4.39-4.38v-0.03z"></path><path fill="#ea4335" d="m12 17.98c-1.42 0-2.8-.19-3.98-.58v1.51c1.39.36 2.9.57 4.48.57 1.58 0 3.09-.21 4.48-.57v-1.51c-1.18.39-2.56.58
+                               <svg class="goxjub" focusable="false" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#4285f4" d="m12 15c1.66 0 3-1.31 3-2.97v-7.02c0-1.66-1.34-3.01-3-3.01s-3 1.34-3 3.01v7.02c0 1.66 1.34 2.97 3 2.97z"></path><path fill="#34a853" d="m11.99 18.01c-2.5 0-4.51-2.01-4.51-4.5v-5.5h-1.5v5.5c0 3.38 2.72 6.11 6.1 6.11s6.1-2.73 6.1-6.11v-5.5h-1.5v5.5c0 2.49-2.02 4.5-4.51 4.5z"></path><path fill="#fbbc05" d="m8.58 20.02h6.84v0.03c0 2.42-1.97 4.38-4.39 4.38h-0.03c-2.42 0-4.39-1.96-4.39-4.38v-0.03z"></path><path fill="#ea4335" d="m12 17.98c-1.42 0-2.8-.19-3.98-.58v1.51c1.39.36 2.9.57 4.48.57 1.58 0 3.09-.21 4.
