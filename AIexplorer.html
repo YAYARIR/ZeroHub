@@ -3,158 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIexplorer - Генератор сайтов</title>
+    <title>AIexplorer</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrollbars initially */
         }
 
-        header {
+        .container {
             text-align: center;
-        }
-
-        #generator {
-            margin-bottom: 20px;
-        }
-
-        #description {
-            width: 100%;
-            height: 100px;
-        }
-
-        #loader {
-            display: none;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
         }
 
         .hidden {
-            display: none;
+            opacity: 0;
         }
 
-        #notification {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px;
-            margin-top: 20px;
+        h1 {
+            color: #5a6a7d;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .initial-text {
+            font-size: 1.2em;
+            color: #777;
+        }
+
+        .slapa-image {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 80vw;
+            max-height: 80vh;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            z-index: 10;
+        }
+
+        .slapa-visible {
+            opacity: 1;
+        }
+
+        .warning-window {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0s, visibility 0s;
+        }
+
+        .warning-visible {
+             opacity: 1;
+             visibility: visible;
+             transition: opacity 0.5s ease-in-out, visibility 0s;
+        }
+
+        .warning-text {
+            font-size: 3em;
+            color: #e74c3c; /* Red color */
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Optional: Add some simple responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .initial-text {
+                font-size: 1em;
+            }
+             .warning-text {
+                font-size: 2em;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
+
+    <div class="container" id="mainContent">
         <h1>AIexplorer</h1>
-        <p>Генерируйте сайты с помощью AI!</p>
-    </header>
+        <p class="initial-text">Загрузка AI-интерфейса...</p>
+    </div>
 
-    <main>
-        <section id="generator">
-            <h2>Создайте свой сайт</h2>
-            <textarea id="description" placeholder="Опишите ваш сайт..."></textarea>
-            <button id="generateBtn">Сгенерировать сайт</button>
-            <div id="loader" class="hidden">Загрузка...</div>
-            <button id="copyBtn" class="hidden">Скопировать HTML</button>
-        </section>
+    <img src="https://static.wikia.nocookie.net/floppa/images/9/9a/%D0%A8%D0%BB%D1%91%D0%BF%D0%B0_%D0%B2_%D0%B2%D0%B0%D0%BD%D0%BD%D0%B5.jpg/revision/latest/scale-to-width-down/180?cb=20220613081631&path-prefix=ru" alt="Большой Шлёпа" class="slapa-image" id="slapaImg">
+    <!-- Использование общедоступной ссылки на изображение Шлёпы -->
 
-        <section id="features">
-            <h2>Особенности</h2>
-            <ul>
-                <li>Генерация кода на основе текстового описания.</li>
-                <li>Адаптивный дизайн для всех устройств.</li>
-                <li>История сгенерированных сайтов.</li>
-            </ul>
-        </section>
+    <div class="warning-window" id="warningWindow">
+        <div class="warning-text">
+            ЗАЧЕМ?? <br> ЖДИ ПОКА ОФИЦИАЛЬНЫЙ AIEXPLORER ВЫЙДЕТ!
+        </div>
+    </div>
 
-        <section id="how-it-works">
-            <h2>Как это работает?</h2>
-            <p>Введите описание вашего сайта, и AI сгенерирует HTML, CSS и JavaScript код.</p>
-        </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainContent = document.getElementById('mainContent');
+            const slapaImg = document.getElementById('slapaImg');
+            const warningWindow = document.getElementById('warningWindow');
 
-        <section id="history">
-            <h2>История генерации</h2>
-            <ul id="historyList"></ul>
-        </section>
+            // Появляется Шлёпа через 1 секунду
+            setTimeout(() => {
+                mainContent.classList.add('hidden'); // Скрываем основной контент
+                slapaImg.classList.add('slapa-visible'); // Показываем Шлёпу
+            }, 1000); // 1000 миллисекунд = 1 секунда
 
-        <footer>
-            <p>&copy; 2023 AIexplorer. Все права защищены.</p>
-        </footer>
-
-        <!-- Уведомления -->
-        <div id="notification" class="hidden"></div>
-
-    </main>
-
-    <!-- JavaScript -->
-    <script type="text/javascript">
-      document.getElementById('generateBtn').addEventListener('click', generateSite);
-      document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
-
-      async function generateSite() {
-          const description = document.getElementById('description').value;
-
-          if (!description) {
-              showNotification("Пожалуйста, введите описание сайта.");
-              return;
-          }
-
-          document.getElementById('loader').style.display = 'block';
-
-          try {
-              const response = await fetch('https://api.example.com/generate', { AIzaSyBy9iTyELfMAZUTh4xiu0l1htRXE4MU3tA
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ description })
-              });
-
-              if (!response.ok) throw new Error("Ошибка при генерации сайта.");
-
-              const data = await response.json();
-
-              // Открываем новое окно и вставляем сгенерированный HTML
-              const newWindow = window.open();
-              newWindow.document.write(data.html); // Предполагается, что API возвращает HTML
-              newWindow.document.close(); // Закрываем поток документа
-
-              // Сохранение в историю
-              saveToHistory(description);
-
-              document.getElementById('copyBtn').classList.remove('hidden');
-
-          } catch (error) {
-              showNotification(error.message);
-
-          } finally {
-              document.getElementById('loader').style.display = 'none';
-          }
-      }
-
-      function copyToClipboard() {
-          const htmlContent = document.getElementById('generatedSite').srcdoc;
-
-          navigator.clipboard.writeText(htmlContent).then(() => {
-              showNotification("HTML-код скопирован в буфер обмена!");
-          }).catch(err => {
-              showNotification("Ошибка при копировании кода.");
-          });
-      }
-
-      function saveToHistory(description) {
-          const historyList = document.getElementById('historyList');
-
-          const listItem = document.createElement('li');
-          listItem.textContent = description;
-
-          historyList.appendChild(listItem);
-      }
-
-      function showNotification(message) {
-         const notification = document.getElementById('notification');
-         notification.textContent = message;
-         notification.classList.remove('hidden');
-
-         setTimeout(() => {
-             notification.classList.add('hidden');
-         }, 3000);
-      }
+            // Появляется красное окно через 2 секунды (1 сек на Шлёпу + 1 сек на окно)
+            setTimeout(() => {
+                 slapaImg.classList.remove('slapa-visible'); // Скрываем Шлёпу
+                warningWindow.classList.add('warning-visible'); // Показываем окно с предупреждением
+            }, 2000); // 2000 миллисекунд = 2 секунды
+        });
     </script>
 
 </body>
