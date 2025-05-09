@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DonateTlers</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 250px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #suggestions {
+            position: absolute;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-top: none;
+            width: 250px;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+        .suggestion-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+        #suggestion-container {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Поддержать пользователя DonateTlers</h1>
+        <div id="suggestion-container">
+            <label for="username">Введите имя пользователя:</label>
+            <input type="text" id="username" name="username" oninput="showSuggestions(this.value)">
+            <div id="suggestions"></div>
+        </div>
+        <button onclick="findUser()">Продолжить</button>
+    </div>
+
+    <script>
+        const users = `
+MIND156
+AwesomeGamer
+SuperCoder
+CreativeArtist
+LuckyStar
+`; // Здесь будут пользователи из Users.txt
+
+        function showSuggestions(inputText) {
+            const suggestionsDiv = document.getElementById('suggestions');
+            suggestionsDiv.innerHTML = '';
+            if (inputText.length > 0) {
+                const matchingUsers = users.split('\n').filter(user =>
+                    user.toLowerCase().startsWith(inputText.toLowerCase()) && user.trim() !== ''
+                );
+                if (matchingUsers.length > 0) {
+                    matchingUsers.forEach(user => {
+                        const suggestionItem = document.createElement('div');
+                        suggestionItem.classList.add('suggestion-item');
+                        suggestionItem.textContent = user.trim();
+                        suggestionItem.onclick = function() {
+                            document.getElementById('username').value = user.trim();
+                            suggestionsDiv.innerHTML = '';
+                        };
+                        suggestionsDiv.appendChild(suggestionItem);
+                    });
+                }
+            }
+        }
+
+        function findUser() {
+            const usernameInput = document.getElementById('username').value.trim();
+            const userExists = users.split('\n').map(u => u.trim()).includes(usernameInput);
+            if (userExists) {
+                window.location.href = `DonatePage.html?username=${encodeURIComponent(usernameInput)}`;
+            } else {
+                alert('Пользователь не найден.');
+            }
+        }
+    </script>
+</body>
+</html>
