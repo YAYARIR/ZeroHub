@@ -83,43 +83,55 @@
     </div>
 
     <script>
-        const users = `
-MIND156
-AwesomeGamer
-SuperCoder
-CreativeArtist
-LuckyStar
-`; // Здесь будут пользователи из Users.txt
-
-        function showSuggestions(inputText) {
+        async function showSuggestions(inputText) {
             const suggestionsDiv = document.getElementById('suggestions');
             suggestionsDiv.innerHTML = '';
             if (inputText.length > 0) {
-                const matchingUsers = users.split('\n').filter(user =>
-                    user.toLowerCase().startsWith(inputText.toLowerCase()) && user.trim() !== ''
-                );
-                if (matchingUsers.length > 0) {
-                    matchingUsers.forEach(user => {
-                        const suggestionItem = document.createElement('div');
-                        suggestionItem.classList.add('suggestion-item');
-                        suggestionItem.textContent = user.trim();
-                        suggestionItem.onclick = function() {
-                            document.getElementById('username').value = user.trim();
-                            suggestionsDiv.innerHTML = '';
-                        };
-                        suggestionsDiv.appendChild(suggestionItem);
-                    });
+                try {
+                    const response = await fetch(`/get_suggestions?query=${encodeURIComponent(inputText)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.suggestions && data.suggestions.length > 0) {
+                            data.suggestions.forEach(user => {
+                                const suggestionItem = document.createElement('div');
+                                suggestionItem.classList.add('suggestion-item');
+                                suggestionItem.textContent = user;
+                                suggestionItem.onclick = function() {
+                                    document.getElementById('username').value = user;
+                                    suggestionsDiv.innerHTML = '';
+                                };
+                                suggestionsDiv.appendChild(suggestionItem);
+                            });
+                        }
+                    } else {
+                        console.error('Ошибка при получении подсказок');
+                    }
+                } catch (error) {
+                    console.error('Произошла ошибка:', error);
                 }
             }
         }
 
-        function findUser() {
+        async function findUser() {
             const usernameInput = document.getElementById('username').value.trim();
-            const userExists = users.split('\n').map(u => u.trim()).includes(usernameInput);
-            if (userExists) {
-                window.location.href = `DonatePage.html?username=${encodeURIComponent(usernameInput)}`;
+            if (usernameInput) {
+                try {
+                    const response = await fetch(`/check_user?username=${encodeURIComponent(usernameInput)}`);
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.exists) {
+                            window.location.href = `DonatePage.html?username=${encodeURIComponent(usernameInput)}`;
+                        } else {
+                            alert('Пользователь не найден.');
+                        }
+                    } else {
+                        console.error('Ошибка при проверке пользователя');
+                    }
+                } catch (error) {
+                    console.error('Произошла ошибка:', error);
+                }
             } else {
-                alert('Пользователь не найден.');
+                alert('Пожалуйста, введите имя пользователя.');
             }
         }
     </script>
