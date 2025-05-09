@@ -81,11 +81,10 @@
 
         if (username) {
             nicknameElement.textContent = `@${username}`;
-            // Генерация "узорной" аватарки
             const colors = ['#ff6b6b', '#f08a5d', '#6aedc7', '#82aaff', '#c77dff'];
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
             avatarElement.style.backgroundColor = randomColor;
-            avatarElement.textContent = username.charAt(0).toUpperCase(); // Первая буква ника
+            avatarElement.textContent = username.charAt(0).toUpperCase();
         } else {
             nicknameElement.textContent = 'Ошибка: имя пользователя не найдено';
         }
