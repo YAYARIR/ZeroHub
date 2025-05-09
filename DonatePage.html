@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поддержка пользователя</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .profile-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background-color: #ccc;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+            color: #fff;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="number"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="avatar" id="avatar"></div>
+        <h2 id="nickname"></h2>
+        <label for="amount">Сумма (руб):</label>
+        <input type="number" id="amount" min="1" value="100">
+        <button onclick="donate()">Задонатить</button>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        const nicknameElement = document.getElementById('nickname');
+        const avatarElement = document.getElementById('avatar');
+
+        if (username) {
+            nicknameElement.textContent = `@${username}`;
+            // Генерация "узорной" аватарки
+            const colors = ['#ff6b6b', '#f08a5d', '#6aedc7', '#82aaff', '#c77dff'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            avatarElement.style.backgroundColor = randomColor;
+            avatarElement.textContent = username.charAt(0).toUpperCase(); // Первая буква ника
+        } else {
+            nicknameElement.textContent = 'Ошибка: имя пользователя не найдено';
+        }
+
+        function donate() {
+            window.location.href = `Donate2.html?username=${encodeURIComponent(username)}&amount=${document.getElementById('amount').value}`;
+        }
+    </script>
+</body>
+</html>
