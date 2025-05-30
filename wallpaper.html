@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Динамические Обои - Песочница (Оптимизированная Физика)</title>
+    <title>Динамические Обои - Расширенная Песочница</title>
     <style>
         body {
             margin: 0;
@@ -82,13 +82,24 @@
         <button class="material-btn" data-material="sand">Песок</button>
         <button class="material-btn" data-material="water">Вода</button>
         <button class="material-btn" data-material="stone">Камень</button>
+        <button class="material-btn" data-material="plastic">Пластик</button>
+        <button class="material-btn" data-material="metal">Металл</button>
+        <button class="material-btn" data-material="wood">Дерево</button>
+        <button class="material-btn" data-material="leather">Кожа</button>
+        <button class="material-btn" data-material="glue">Клей</button>
         <button class="material-btn" data-material="bomb">Бомба</button>
         <button class="material-btn" data-material="smoke">Дым</button>
         <button class="material-btn" data-material="fire">Огонь</button>
+        <button class="material-btn" data-material="air">Воздух</button>
+        <button class="material-btn" data-material="atmosphere">Атмосфера</button>
+        <button class="material-btn" data-material="cloud">Облако</button>
+        <button class="material-btn" data-material="sky">Небо</button>
+        <button class="material-btn" data-material="electricity">Ток</button>
+        <button class="material-btn" data-material="lightning">Молния</button>
         <button class="material-btn" data-material="wall">Стена</button>
         <button class="material-btn" data-material="eraser">Ластик</button>
         <button class="material-btn" data-material="reset">Очистить</button>
-        </div>
+    </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
@@ -134,7 +145,7 @@
                 this.isStatic = false;
                 this.isAffectedByGravity = true;
                 this.remove = false;
-                this.life = -1; // Для материалов с ограниченным временем жизни (дым, огонь)
+                this.life = -1; // Для материалов с ограниченным временем жизни (дым, огонь, электричество)
 
                 this.setColorAndProperties(material);
             }
@@ -197,6 +208,90 @@
                         this.mass = 1000; // Большая масса для статики
                         this.radius = PARTICLE_SIZE;
                         break;
+                    case 'plastic':
+                        this.color = '#A020F0'; // Фиолетовый
+                        this.density = 1.2;
+                        this.friction = 0.7;
+                        this.bounciness = 0.4;
+                        this.mass = 1.2;
+                        break;
+                    case 'metal':
+                        this.color = '#B0C4DE'; // Светлый металлик
+                        this.density = 7.0;
+                        this.friction = 0.98;
+                        this.bounciness = 0.1;
+                        this.mass = 7.0;
+                        break;
+                    case 'wood':
+                        this.color = '#8B4513'; // Коричневый (древесный)
+                        this.density = 0.6;
+                        this.friction = 0.85;
+                        this.bounciness = 0.3;
+                        this.mass = 0.6;
+                        break;
+                    case 'leather':
+                        this.color = '#8B4513'; // Коричневый, как дерево, но можно темнее
+                        this.color = '#8B4513'; // Темно-коричневый
+                        this.density = 0.9;
+                        this.friction = 0.9; // Высокое трение
+                        this.bounciness = 0.1; // Низкий отскок
+                        this.mass = 0.9;
+                        break;
+                    case 'glue':
+                        this.color = 'rgba(255, 255, 0, 0.5)'; // Желтоватый, полупрозрачный
+                        this.density = 1.1;
+                        this.friction = 0.99; // Очень высокое трение
+                        this.bounciness = 0.01; // Почти нет отскока
+                        this.mass = 1.1;
+                        // Клей будет пытаться "склеиваться" с другими частицами
+                        break;
+                    case 'air':
+                        this.color = 'rgba(200, 200, 255, 0.05)'; // Едва видимый голубоватый
+                        this.radius = PARTICLE_SIZE * 0.5;
+                        this.isAffectedByGravity = false;
+                        this.friction = 0.01; // Почти нет трения
+                        this.life = 300; // Воздух может "рассеиваться"
+                        this.mass = 0.01;
+                        break;
+                    case 'atmosphere':
+                        this.color = 'rgba(100, 100, 255, 0.02)'; // Еще более прозрачный голубой
+                        this.radius = PARTICLE_SIZE * 1.5;
+                        this.isAffectedByGravity = false;
+                        this.friction = 0.005; // Почти нет трения
+                        this.mass = 0.005;
+                        break;
+                    case 'cloud':
+                        this.color = 'rgba(200, 200, 200, 0.3)'; // Светло-серый, полупрозрачный
+                        this.radius = PARTICLE_SIZE * 1.5;
+                        this.isAffectedByGravity = false; // Или очень слабая гравитация
+                        this.friction = 0.05;
+                        this.vx = (Math.random() - 0.5) * 0.1; // Медленный дрейф
+                        this.vy = (Math.random() - 0.5) * 0.05;
+                        this.mass = 0.2;
+                        break;
+                    case 'sky':
+                        this.color = 'rgba(135, 206, 235, 0.1)'; // Светлый голубой, очень прозрачный
+                        this.radius = PARTICLE_SIZE * 2;
+                        this.isAffectedByGravity = false;
+                        this.friction = 0.001;
+                        this.mass = 0.001;
+                        break;
+                    case 'electricity':
+                        this.color = '#FFFF00'; // Ярко-желтый
+                        this.radius = PARTICLE_SIZE * 0.5;
+                        this.isAffectedByGravity = false;
+                        this.friction = 0; // Нет трения
+                        this.life = 10; // Очень короткое время жизни
+                        this.mass = 0.001;
+                        break;
+                    case 'lightning':
+                        this.color = '#FFFFFF'; // Белый, для яркого свечения
+                        this.radius = PARTICLE_SIZE * 2;
+                        this.isAffectedByGravity = false;
+                        this.friction = 0;
+                        this.life = 5; // Мгновенное исчезновение
+                        this.mass = 0.0001;
+                        break;
                     default:
                         this.color = '#FFFFFF';
                         this.mass = 1;
@@ -205,12 +300,11 @@
 
             update() {
                 if (this.isStatic) {
-                    this.vx = 0; // Статические объекты не движутся
+                    this.vx = 0;
                     this.vy = 0;
                     return;
                 }
 
-                // Уменьшение времени жизни для некоторых материалов
                 if (this.life > 0) {
                     this.life--;
                     if (this.life <= 0) {
@@ -219,39 +313,53 @@
                     }
                 }
 
-                // Логика для дыма и огня
-                if (this.material === 'smoke') {
-                    this.color = `rgba(150, 150, 150, ${this.life / 150 * 0.4})`;
+                // Газообразные и энергетические материалы (не подчиняются обычной физике)
+                if (this.material === 'smoke' || this.material === 'fire' || this.material === 'air' ||
+                    this.material === 'atmosphere' || this.material === 'cloud' || this.material === 'sky' ||
+                    this.material === 'electricity' || this.material === 'lightning') {
+
                     this.x += this.vx;
                     this.y += this.vy;
-                    this.vx *= 0.98;
-                    this.vy *= 0.98;
-                    this.radius *= 1.01; // Дым расширяется
-                    return; // Не применяем гравитацию и коллизии ниже
-                } else if (this.material === 'fire') {
-                    this.color = `rgba(255, ${165 + Math.floor(this.life / 60 * 90)}, 0, ${this.life / 60 * 0.6})`;
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    this.vx *= 0.95;
-                    this.vy *= 0.95;
-                    this.radius *= 1.02; // Огонь расширяется
-                    return; // Не применяем гравитацию и коллизии ниже
+                    this.vx *= this.friction;
+                    this.vy *= this.friction;
+
+                    // Специальная логика для визуальных эффектов
+                    if (this.material === 'smoke') {
+                        this.color = `rgba(150, 150, 150, ${this.life / 150 * 0.4})`;
+                        this.radius *= 1.01;
+                    } else if (this.material === 'fire') {
+                        this.color = `rgba(255, ${165 + Math.floor(this.life / 60 * 90)}, 0, ${this.life / 60 * 0.6})`;
+                        this.radius *= 1.02;
+                    } else if (this.material === 'electricity' || this.material === 'lightning') {
+                         this.color = `rgba(255, 255, ${Math.floor(this.life / 10 * 255)}, ${this.life / 10})`; // Затухание
+                         this.radius *= 1.2; // Расширение разряда
+                    } else if (this.material === 'cloud') {
+                        this.vx += (Math.random() - 0.5) * 0.01; // Небольшой случайный дрейф
+                        this.vy += (Math.random() - 0.5) * 0.005;
+                    }
+
+                    // Коллизии со стенами для газов (чтобы не улетали за экран)
+                    if (this.x - this.radius < 0 || this.x + this.radius > canvas.width) {
+                        this.vx *= -1;
+                    }
+                    if (this.y - this.radius < 0 || this.y + this.radius > canvas.height) {
+                        this.vy *= -1;
+                    }
+
+                    return;
                 }
 
-                // Гравитация
+                // Обычная физика для твердых и жидких материалов
                 if (this.isAffectedByGravity) {
                     this.vy += GRAVITY;
                 }
 
-                // Сохраняем предыдущую позицию
                 this.prevX = this.x;
                 this.prevY = this.y;
 
-                // Обновление позиции
                 this.x += this.vx;
                 this.y += this.vy;
 
-                // Применение трения
                 this.vx *= this.friction;
                 this.vy *= this.friction;
 
@@ -271,7 +379,7 @@
                     this.y = canvas.height - this.radius;
                     this.vy *= -this.bounciness;
                     if (this.material === 'stone' && Math.abs(this.vy) < 0.2 && Math.abs(this.vx) < 0.2) {
-                        this.isStatic = true; // Камни могут остановиться на дне
+                        this.isStatic = true;
                         this.vx = 0;
                         this.vy = 0;
                     }
@@ -288,8 +396,9 @@
 
             // Обработка коллизий между частицами
             resolveCollision(other) {
-                // Игнорируем коллизии для дыма/огня, или если одна из частиц помечена на удаление
-                if (this.material === 'smoke' || this.material === 'fire' || other.material === 'smoke' || other.material === 'fire' || this.remove || other.remove) {
+                // Игнорируем коллизии для газов, энергии или если частица помечена на удаление
+                const nonCollidingMaterials = ['smoke', 'fire', 'air', 'atmosphere', 'cloud', 'sky', 'electricity', 'lightning'];
+                if (nonCollidingMaterials.includes(this.material) || nonCollidingMaterials.includes(other.material) || this.remove || other.remove) {
                     return;
                 }
 
@@ -303,7 +412,6 @@
                     const normalX = dx / dist;
                     const normalY = dy / dist;
 
-                    // Перемещение частиц, чтобы они не перекрывались
                     if (!this.isStatic && !other.isStatic) {
                         const totalMass = this.mass + other.mass;
                         this.x -= normalX * (overlap * (other.mass / totalMass));
@@ -318,12 +426,10 @@
                         this.y -= normalY * overlap;
                     }
 
-                    // Расчет импульса
                     const relativeVelX = other.vx - this.vx;
                     const relativeVelY = other.vy - this.vy;
                     const dotProduct = relativeVelX * normalX + relativeVelY * normalY;
 
-                    // Если частицы движутся друг от друга, нет необходимости в дальнейшем расчете
                     if (dotProduct > 0) return;
 
                     const elasticity = Math.min(this.bounciness, other.bounciness);
@@ -343,7 +449,7 @@
                         other.vy += impulseY / other.mass;
                     }
 
-                    // Для воды - стремимся к более гладкому поведению
+                    // Специальные взаимодействия материалов
                     if (this.material === 'water' && other.material === 'water') {
                         const avgVx = (this.vx + other.vx) / 2;
                         const avgVy = (this.vy + other.vy) / 2;
@@ -352,13 +458,34 @@
                         other.vx = avgVx * 0.8;
                         other.vy = avgVy * 0.8;
                     }
-                    // Для песка - чтобы формировались кучи
                     if (this.material === 'sand' && other.material === 'sand') {
-                        // Немного уменьшаем скорость, чтобы они "оседали"
                         this.vx *= 0.9;
                         this.vy *= 0.9;
                         other.vx *= 0.9;
                         other.vy *= 0.9;
+                    }
+                    if (this.material === 'glue' || other.material === 'glue') {
+                         // Клей сильно уменьшает скорости и трение
+                         this.vx *= 0.05;
+                         this.vy *= 0.05;
+                         other.vx *= 0.05;
+                         other.vy *= 0.05;
+                         this.friction = 0.999;
+                         other.friction = 0.999;
+                    }
+                    if ((this.material === 'electricity' && (other.material === 'metal' || other.material === 'water')) ||
+                        (other.material === 'electricity' && (this.material === 'metal' || this.material === 'water'))) {
+                        // Ток "поражает" металл или воду - превращаем в искры/дым
+                        if (this.material === 'metal' || this.material === 'water') {
+                            this.material = 'fire'; // Или 'smoke'
+                            this.setColorAndProperties('fire');
+                            this.life = 20;
+                        }
+                        if (other.material === 'metal' || other.material === 'water') {
+                            other.material = 'fire';
+                            other.setColorAndProperties('fire');
+                            other.life = 20;
+                        }
                     }
                 }
             }
@@ -369,7 +496,6 @@
                 const explosionRadius = 150;
                 const explosionForce = 25;
 
-                // Для бомбы нужно проверить все частицы, так как взрыв не локален к сетке
                 for (let i = particles.length - 1; i >= 0; i--) {
                     const p = particles[i];
                     if (p === this) continue;
@@ -381,8 +507,10 @@
                         p.vx += Math.cos(angle) * force;
                         p.vy += Math.sin(angle) * force;
 
-                        if (dist < explosionRadius * 0.5 && p.material !== 'bomb' && p.material !== 'wall' && p.material !== 'stone') {
-                            if (Math.random() < 0.7) { // Больше дыма, меньше огня
+                        // Превращаем некоторые материалы в дым/огонь
+                        const affectedByExplosion = ['sand', 'water', 'plastic', 'wood', 'leather'];
+                        if (dist < explosionRadius * 0.5 && affectedByExplosion.includes(p.material)) {
+                            if (Math.random() < 0.7) {
                                 p.material = 'smoke';
                                 p.setColorAndProperties('smoke');
                                 p.vx += (Math.random() - 0.5) * 2;
@@ -394,7 +522,6 @@
                                 p.vy += (Math.random() - 0.5) * 2.5;
                             }
                         } else if (dist < explosionRadius * 0.7 && p.material === 'stone') {
-                            // Отбрасываем камни
                             p.isStatic = false;
                         }
                     }
@@ -478,20 +605,20 @@
             // Обработка коллизий только с ближайшими частицами из сетки
             for (let i = 0; i < particles.length; i++) {
                 const p1 = particles[i];
-                if (p1.isStatic || p1.material === 'smoke' || p1.material === 'fire') continue; // Статичные частицы и газы не инициируют коллизии
+                // Статичные частицы, газы и энергетические объекты не инициируют коллизии с другими,
+                // но могут быть затронуты другими объектами.
+                const nonCollidingStarters = ['smoke', 'fire', 'air', 'atmosphere', 'cloud', 'sky', 'electricity', 'lightning'];
+                if (p1.isStatic || nonCollidingStarters.includes(p1.material)) continue;
 
                 const nearby = getNearbyParticles(p1);
                 for (const p2 of nearby) {
                     if (p1 === p2) continue; // Не сравниваем частицу саму с собой
 
                     // Убедимся, что коллизия обрабатывается только один раз для пары
-                    // Если p2 уже обработала коллизию с p1, не делайте это снова
-                    // Простая эвристика: если p1.id < p2.id (нужен id) или просто избежать повторов
-                    // Сейчас без ID, просто проверяем, чтобы не обработать дважды.
-                    // Более корректно было бы использовать уникальный ID для каждой частицы
-                    // Или просто разрешать коллизии в одном направлении
-                    // Но для простоты: p2 не должна быть обработана ранее в этом же цикле
-                    if (particles.indexOf(p2) > i) { // Убеждаемся, что p2 находится дальше в массиве, чем p1
+                    // Если p2 находится дальше в массиве, чем p1, то обрабатываем.
+                    // Это простая эвристика, т.к. индексы могут меняться.
+                    // Для идеальной уникальности нужен уникальный ID для каждой частицы.
+                    if (particles.indexOf(p2) > i) {
                          p1.resolveCollision(p2);
                     }
                 }
@@ -546,7 +673,9 @@
                 const numParticlesToAdd = 3;
                 if (particles.length + numParticlesToAdd > MAX_PARTICLES) {
                     // Если превышаем лимит, удаляем старые частицы, чтобы освободить место
-                    particles.splice(0, particles.length + numParticlesToAdd - MAX_PARTICLES);
+                    // Удаляем больше, чтобы не срабатывало слишком часто
+                    const numToRemove = Math.min(numParticlesToAdd * 2, particles.length + numParticlesToAdd - MAX_PARTICLES);
+                    particles.splice(0, numToRemove);
                 }
 
                 for (let i = 0; i < numParticlesToAdd; i++) {
