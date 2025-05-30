@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Динамические Обои - Песочница (Продвинутая Физика)</title>
+    <title>Динамические Обои - Песочница (Оптимизированная Физика)</title>
     <style>
         body {
             margin: 0;
@@ -99,12 +99,20 @@
         let selectedMaterial = 'sand'; // Материал по умолчанию
         const PARTICLE_SIZE = 3; // Радиус частиц
         const GRAVITY = 0.15; // Ускорение свободного падения
-        const MAX_PARTICLES = 5000; // Ограничение на количество частиц для производительности
+        const MAX_PARTICLES = 10000; // Увеличен лимит частиц
+        const GRID_SIZE = PARTICLE_SIZE * 6; // Размер ячейки сетки. Должен быть >= 2 * PARTICLE_SIZE
+
+        let grid = {};
+        let gridCols = 0;
+        let gridRows = 0;
 
         // Настраиваем размер canvas на весь экран
         function resizeCanvas() {
             canvas.width = window.innerWidth - materialPalette.offsetWidth;
             canvas.height = window.innerHeight;
+            gridCols = Math.ceil(canvas.width / GRID_SIZE);
+            gridRows = Math.ceil(canvas.height / GRID_SIZE);
+            buildGrid(); // Перестроить сетку при изменении размера
         }
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas(); // Изначальная установка размера
@@ -361,6 +369,7 @@
                 const explosionRadius = 150;
                 const explosionForce = 25;
 
+                // Для бомбы нужно проверить все частицы, так как взрыв не локален к сетке
                 for (let i = particles.length - 1; i >= 0; i--) {
                     const p = particles[i];
                     if (p === this) continue;
@@ -410,24 +419,81 @@
             }
         }
 
+        // --- Управление Пространственной Сеткой ---
+        function getGridCoords(x, y) {
+            const col = Math.floor(x / GRID_SIZE);
+            const row = Math.floor(y / GRID_SIZE);
+            return { col, row };
+        }
+
+        function buildGrid() {
+            grid = {}; // Очищаем сетку
+            for (let i = 0; i < gridCols; i++) {
+                for (let j = 0; j < gridRows; j++) {
+                    grid[`${i}_${j}`] = []; // Инициализируем пустые массивы для каждой ячейки
+                }
+            }
+
+            for (const particle of particles) {
+                const { col, row } = getGridCoords(particle.x, particle.y);
+                if (grid[`${col}_${row}`]) {
+                    grid[`${col}_${row}`].push(particle);
+                }
+            }
+        }
+
+        function getNearbyParticles(particle) {
+            const { col, row } = getGridCoords(particle.x, particle.y);
+            let nearby = [];
+
+            // Проверяем текущую ячейку и 8 соседних
+            for (let c = col - 1; c <= col + 1; c++) {
+                for (let r = row - 1; r <= row + 1; r++) {
+                    if (grid[`${c}_${r}`]) {
+                        nearby = nearby.concat(grid[`${c}_${r}`]);
+                    }
+                }
+            }
+            return nearby;
+        }
+
+
         // --- Игровой цикл ---
         function update() {
+            // Удаляем частицы, помеченные на удаление, до построения сетки
+            for (let i = particles.length - 1; i >= 0; i--) {
+                if (particles[i].remove) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            // Перестраиваем сетку на каждом кадре
+            buildGrid();
+
             // Обновляем позиции всех частиц
             for (let i = 0; i < particles.length; i++) {
                 particles[i].update();
             }
 
-            // Обработка коллизий между частицами (N^2, поэтому при большом количестве будет медленно)
+            // Обработка коллизий только с ближайшими частицами из сетки
             for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    particles[i].resolveCollision(particles[j]);
-                }
-            }
+                const p1 = particles[i];
+                if (p1.isStatic || p1.material === 'smoke' || p1.material === 'fire') continue; // Статичные частицы и газы не инициируют коллизии
 
-            // Удаляем частицы, помеченные на удаление
-            for (let i = particles.length - 1; i >= 0; i--) {
-                if (particles[i].remove) {
-                    particles.splice(i, 1);
+                const nearby = getNearbyParticles(p1);
+                for (const p2 of nearby) {
+                    if (p1 === p2) continue; // Не сравниваем частицу саму с собой
+
+                    // Убедимся, что коллизия обрабатывается только один раз для пары
+                    // Если p2 уже обработала коллизию с p1, не делайте это снова
+                    // Простая эвристика: если p1.id < p2.id (нужен id) или просто избежать повторов
+                    // Сейчас без ID, просто проверяем, чтобы не обработать дважды.
+                    // Более корректно было бы использовать уникальный ID для каждой частицы
+                    // Или просто разрешать коллизии в одном направлении
+                    // Но для простоты: p2 не должна быть обработана ранее в этом же цикле
+                    if (particles.indexOf(p2) > i) { // Убеждаемся, что p2 находится дальше в массиве, чем p1
+                         p1.resolveCollision(p2);
+                    }
                 }
             }
         }
@@ -479,8 +545,8 @@
                 // Добавление частиц
                 const numParticlesToAdd = 3;
                 if (particles.length + numParticlesToAdd > MAX_PARTICLES) {
-                    // Если превышаем лимит, не добавляем или удаляем старые
-                    return;
+                    // Если превышаем лимит, удаляем старые частицы, чтобы освободить место
+                    particles.splice(0, particles.length + numParticlesToAdd - MAX_PARTICLES);
                 }
 
                 for (let i = 0; i < numParticlesToAdd; i++) {
