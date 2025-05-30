@@ -3,54 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Динамические обои</title>
+    <title>Интерактивные динамические обои</title>
     <style>
         body, html {
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Убираем скроллбары */
+            overflow: hidden;
             background-color: #1a1a2e; /* Темно-синий фон */
             height: 100%;
             width: 100%;
+            cursor: none; /* Скроем стандартный курсор, т.к. будет интеракция */
         }
         #wallpaperCanvas {
-            display: block; /* Убирает лишнее пространство под canvas */
+            display: block;
             position: absolute;
             top: 0;
             left: 0;
+        }
+        /* Можно добавить небольшой кружок для имитации курсора, если стандартный скрыт */
+        .mouse-indicator {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            pointer-events: none; /* Чтобы не мешал кликам по canvas, если они будут */
+            transform: translate(-50%, -50%); /* Центрирование */
+            display: none; /* По умолчанию скрыт, покажем JS */
         }
     </style>
 </head>
 <body>
     <canvas id="wallpaperCanvas"></canvas>
+    <div class="mouse-indicator" id="mouseIndicator"></div>
 
     <script>
         const canvas = document.getElementById('wallpaperCanvas');
         const ctx = canvas.getContext('2d');
+        const mouseIndicator = document.getElementById('mouseIndicator');
 
         let particlesArray;
 
-        // Устанавливаем размер canvas на весь экран
+        // Объект для хранения координат мыши и радиуса взаимодействия
+        let mouse = {
+            x: undefined,
+            y: undefined,
+            radius: 100 // Радиус взаимодействия с частицами
+        };
+
+        // Обновление координат мыши при ее движении
+        window.addEventListener('mousemove', (event) => {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+            if (mouseIndicator) {
+                mouseIndicator.style.left = mouse.x + 'px';
+                mouseIndicator.style.top = mouse.y + 'px';
+                mouseIndicator.style.display = 'block';
+            }
+        });
+
+        // Сброс координат мыши, когда она уходит за пределы окна
+        window.addEventListener('mouseout', () => {
+            mouse.x = undefined;
+            mouse.y = undefined;
+            if (mouseIndicator) {
+                mouseIndicator.style.display = 'none';
+            }
+        });
+        
+        // Клик мыши для дополнительного эффекта (например, создание "волны")
+        canvas.addEventListener('click', () => {
+            if (mouse.x === undefined || mouse.y === undefined) return;
+
+            // Создадим эффект "волны отталкивания" от точки клика
+            const clickRadius = 200; // Радиус волны
+            const clickStrength = 15; // Сила волны
+
+            for (let i = 0; i < particlesArray.length; i++) {
+                const particle = particlesArray[i];
+                const dx = particle.x - mouse.x;
+                const dy = particle.y - mouse.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < clickRadius) {
+                    const forceDirectionX = dx / distance;
+                    const forceDirectionY = dy / distance;
+                    // Чем ближе к центру клика, тем слабее начальный толчок, чтобы не было слишком резко
+                    // и сильнее отталкиваем те, что на краю волны. Или наоборот.
+                    // В данном случае, отталкиваем сильнее те, что ближе
+                    const force = (clickRadius - distance) / clickRadius * clickStrength;
+                    
+                    particle.speedX += forceDirectionX * force * 0.1; // Уменьшаем влияние, чтобы не улетали слишком быстро
+                    particle.speedY += forceDirectionY * force * 0.1;
+                }
+            }
+        });
+
+
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            // Переинициализация частиц при изменении размера, чтобы они распределились по новому пространству
+            // или просто обновить их положение, если не хотим терять текущее состояние.
+            // Для простоты, переинициализируем.
+            init();
         }
-        resizeCanvas();
+        resizeCanvas(); // Первоначальная установка размера
         window.addEventListener('resize', resizeCanvas);
 
 
-        // Класс для создания частицы
         class Particle {
             constructor(x, y, size, speedX, speedY, color) {
                 this.x = x;
                 this.y = y;
+                this.originalX = x; // Для эффекта возвращения
+                this.originalY = y; // Для эффекта возвращения
                 this.size = size;
                 this.speedX = speedX;
                 this.speedY = speedY;
                 this.color = color;
+                this.density = (Math.random() * 30) + 1; // Для эффекта параллакса от мыши
             }
 
-            // Метод для отрисовки частицы
             draw() {
                 ctx.fillStyle = this.color;
                 ctx.beginPath();
@@ -58,15 +132,43 @@
                 ctx.fill();
             }
 
-            // Метод для обновления позиции частицы
             update() {
+                // Взаимодействие с мышью (отталкивание)
+                if (mouse.x !== undefined && mouse.y !== undefined) {
+                    const dxMouse = this.x - mouse.x;
+                    const dyMouse = this.y - mouse.y;
+                    const distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                    const repulsionStrength = 3; // Сила отталкивания от курсора
+
+                    if (distanceMouse < mouse.radius) {
+                        const forceDirectionX = dxMouse / distanceMouse;
+                        const forceDirectionY = dyMouse / distanceMouse;
+                        // Сила отталкивания, убывающая с расстоянием от центра курсора
+                        const force = (mouse.radius - distanceMouse) / mouse.radius;
+                        
+                        this.x += forceDirectionX * force * repulsionStrength;
+                        this.y += forceDirectionY * force * repulsionStrength;
+                    }
+                }
+
                 // Отталкивание от краев экрана
                 if (this.x + this.size > canvas.width || this.x - this.size < 0) {
                     this.speedX = -this.speedX;
+                    // Корректировка, чтобы не застревали в стенах после отталкивания мышью
+                    if (this.x + this.size > canvas.width) this.x = canvas.width - this.size;
+                    if (this.x - this.size < 0) this.x = this.size;
                 }
                 if (this.y + this.size > canvas.height || this.y - this.size < 0) {
                     this.speedY = -this.speedY;
+                    if (this.y + this.size > canvas.height) this.y = canvas.height - this.size;
+                    if (this.y - this.size < 0) this.y = this.size;
                 }
+                
+                // Ограничение максимальной скорости, чтобы частицы не "сходили с ума" после клика
+                const maxSpeed = 2;
+                if (Math.abs(this.speedX) > maxSpeed) this.speedX = Math.sign(this.speedX) * maxSpeed;
+                if (Math.abs(this.speedY) > maxSpeed) this.speedY = Math.sign(this.speedY) * maxSpeed;
+
 
                 this.x += this.speedX;
                 this.y += this.speedY;
@@ -75,103 +177,64 @@
             }
         }
 
-        // Инициализация частиц
         function init() {
             particlesArray = [];
-            const numberOfParticles = 100; // Количество частиц
-            const colors = ['#e0e0e0', '#c7c7c7', '#a0a0a0', '#8c8c8c']; // Цвета частиц
+            const numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000); // Динамическое кол-во частиц
+            const colors = ['#e0e0e0', '#c7c7c7', '#a0a0a0', '#8c8c8c', '#707070'];
 
             for (let i = 0; i < numberOfParticles; i++) {
-                const size = Math.random() * 3 + 1; // Размер от 1 до 4
+                const size = Math.random() * 2.5 + 1; // Размер от 1 до 3.5
                 const x = Math.random() * (canvas.width - size * 2) + size;
                 const y = Math.random() * (canvas.height - size * 2) + size;
-                const speedX = (Math.random() * 1 - 0.5); // Скорость по X (-0.5 до 0.5)
-                const speedY = (Math.random() * 1 - 0.5); // Скорость по Y (-0.5 до 0.5)
+                const speedX = (Math.random() * 0.6 - 0.3); // Скорость по X
+                const speedY = (Math.random() * 0.6 - 0.3); // Скорость по Y
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 particlesArray.push(new Particle(x, y, size, speedX, speedY, color));
             }
         }
 
-        // Анимационный цикл
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height); // Очистка canvas
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-            }
-            requestAnimationFrame(animate); // Зацикливаем анимацию
-        }
-
-        // Запуск
-        init();
-        animate();
-
-        // Соединение частиц линиями при близком расстоянии (опционально)
         function connectParticles() {
-            const maxDistance = 100; // Максимальное расстояние для соединения
-            ctx.strokeStyle = 'rgba(200, 200, 200, 0.1)'; // Цвет линий
+            const maxDistance = 120; // Увеличим для лучшей видимости
+            // Динамическая прозрачность линий в зависимости от расстояния до мыши
+            let lineOpacity = 0.05; 
+            if (mouse.x !== undefined && mouse.y !== undefined) {
+                 lineOpacity = 0.02; // Менее заметные линии когда мышь активна
+            }
+
+
             for (let a = 0; a < particlesArray.length; a++) {
-                for (let b = a + 1; b < particlesArray.length; b++) { // b = a + 1 чтобы избежать дублирования и самосоединения
+                for (let b = a + 1; b < particlesArray.length; b++) {
                     const dx = particlesArray[a].x - particlesArray[b].x;
                     const dy = particlesArray[a].y - particlesArray[b].y;
                     const distance = Math.sqrt(dx * dx + dy * dy);
 
                     if (distance < maxDistance) {
+                        const opacity = Math.min(0.3, (1 - (distance / maxDistance)) * 0.5 + lineOpacity); // Делаем линии более прозрачными на расстоянии
+                        ctx.strokeStyle = `rgba(200, 200, 220, ${opacity})`;
                         ctx.beginPath();
                         ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
                         ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                        ctx.lineWidth = 0.5;
+                        ctx.lineWidth = 0.8; // Немного толще линии
                         ctx.stroke();
                     }
                 }
             }
         }
 
-        // Обновляем анимационный цикл, чтобы включить соединение частиц
-        function animateWithConnections() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-            }
-            connectParticles(); // Добавляем отрисовку соединений
-            requestAnimationFrame(animateWithConnections);
-        }
-
-        // Перезапускаем с новой функцией анимации (если хотите соединения)
-        // Если соединения не нужны, закомментируйте следующую строку и раскомментируйте `animate();` выше
-        // init(); // Уже вызван
-        // animate(); // Используйте это, если не хотите соединительные линии
-        
-        // Если хотите с соединительными линиями:
-        // Для этого нужно изменить функцию animate, чтобы она вызывала connectParticles
-        // Поэтому мы создали animateWithConnections и вызовем её.
-        // Сначала остановим предыдущий цикл, если он был запущен:
-        // (в данном коде animate() еще не успел запустить много кадров, но для общей практики)
-        // cancelAnimationFrame(requestAnimationFrame(animate)); // Это не совсем корректно, лучше просто не вызывать animate() дважды.
-
-        // Мы просто заменим вызов animate() на animateWithConnections()
-        // init(); // уже вызвали
-        // animate(); // не вызываем
-        
-        // Вместо этого, давайте изменим animate так, чтобы она сразу включала connectParticles
-        // и переименуем её для ясности.
-        
-        // Удаляем старый вызов animate и init
-        // init();
-        // animate();
-        
-        // Новая функция анимации, включающая соединения
         function animationLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
+            if (particlesArray) { // Убедимся, что массив инициализирован
+                 for (let i = 0; i < particlesArray.length; i++) {
+                    particlesArray[i].update();
+                }
+                connectParticles();
             }
-            connectParticles();
             requestAnimationFrame(animationLoop);
         }
 
         // Запуск
-        init();
-        animationLoop(); // Используем animationLoop вместо animate
+        // init(); // resizeCanvas вызовет init()
+        animationLoop();
 
     </script>
 </body>
