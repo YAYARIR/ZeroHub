@@ -3,239 +3,430 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Интерактивные динамические обои</title>
+    <title>Динамические Обои - Песочница</title>
     <style>
-        body, html {
+        body {
             margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #1a1a2e; /* Темно-синий фон */
-            height: 100%;
-            width: 100%;
-            cursor: none; /* Скроем стандартный курсор, т.к. будет интеракция */
+            overflow: hidden; /* Скрываем прокрутку */
+            display: flex;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a; /* Темный фон для всего окна */
+            color: #eee;
         }
-        #wallpaperCanvas {
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
+
+        #gameCanvas {
+            flex-grow: 1; /* Занимает все доступное пространство */
+            background-color: #000; /* Черный фон для песочницы */
+            cursor: crosshair; /* Курсор в виде прицела */
+            border-right: 1px solid #333; /* Небольшая граница */
         }
-        /* Можно добавить небольшой кружок для имитации курсора, если стандартный скрыт */
-        .mouse-indicator {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.3);
-            pointer-events: none; /* Чтобы не мешал кликам по canvas, если они будут */
-            transform: translate(-50%, -50%); /* Центрирование */
-            display: none; /* По умолчанию скрыт, покажем JS */
+
+        #materialPalette {
+            width: 220px; /* Немного шире для кнопок */
+            background-color: #2a2a2a;
+            color: #eee;
+            padding: 20px;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto; /* Если материалов будет много, появится прокрутка */
+        }
+
+        #materialPalette h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #00ff88; /* Яркий заголовок */
+            text-shadow: 0 0 5px rgba(0, 255, 136, 0.5);
+            font-size: 1.8em;
+            letter-spacing: 1px;
+        }
+
+        .material-btn {
+            width: 90%;
+            padding: 12px;
+            margin-bottom: 12px;
+            background-color: #3e82f7; /* Приятный синий */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .material-btn:hover {
+            background-color: #3069d4;
+            transform: translateY(-2px);
+        }
+
+        .material-btn.active {
+            background-color: #28a745; /* Зеленый для активной кнопки */
+            box-shadow: 0 0 15px rgba(40, 167, 69, 0.7);
+            transform: scale(1.03);
+            border: 2px solid #00e676;
+        }
+
+        .material-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body>
-    <canvas id="wallpaperCanvas"></canvas>
-    <div class="mouse-indicator" id="mouseIndicator"></div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="materialPalette">
+        <h2>Материалы</h2>
+        <button class="material-btn" data-material="sand">Песок</button>
+        <button class="material-btn" data-material="water">Вода</button>
+        <button class="material-btn" data-material="stone">Камень</button>
+        <button class="material-btn" data-material="bomb">Бомба</button>
+        <button class="material-btn" data-material="smoke">Дым</button>
+        <button class="material-btn" data-material="fire">Огонь</button>
+        <button class="material-btn" data-material="wall">Стена</button>
+        </div>
 
     <script>
-        const canvas = document.getElementById('wallpaperCanvas');
+        const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const mouseIndicator = document.getElementById('mouseIndicator');
+        const materialPalette = document.getElementById('materialPalette');
 
-        let particlesArray;
+        let particles = [];
+        let selectedMaterial = 'sand'; // Материал по умолчанию
+        const PARTICLE_SIZE = 3; // Размер частиц (радиус)
+        const GRAVITY = 0.1; // Ускорение свободного падения
 
-        // Объект для хранения координат мыши и радиуса взаимодействия
-        let mouse = {
-            x: undefined,
-            y: undefined,
-            radius: 100 // Радиус взаимодействия с частицами
-        };
-
-        // Обновление координат мыши при ее движении
-        window.addEventListener('mousemove', (event) => {
-            mouse.x = event.clientX;
-            mouse.y = event.clientY;
-            if (mouseIndicator) {
-                mouseIndicator.style.left = mouse.x + 'px';
-                mouseIndicator.style.top = mouse.y + 'px';
-                mouseIndicator.style.display = 'block';
-            }
-        });
-
-        // Сброс координат мыши, когда она уходит за пределы окна
-        window.addEventListener('mouseout', () => {
-            mouse.x = undefined;
-            mouse.y = undefined;
-            if (mouseIndicator) {
-                mouseIndicator.style.display = 'none';
-            }
-        });
-        
-        // Клик мыши для дополнительного эффекта (например, создание "волны")
-        canvas.addEventListener('click', () => {
-            if (mouse.x === undefined || mouse.y === undefined) return;
-
-            // Создадим эффект "волны отталкивания" от точки клика
-            const clickRadius = 200; // Радиус волны
-            const clickStrength = 15; // Сила волны
-
-            for (let i = 0; i < particlesArray.length; i++) {
-                const particle = particlesArray[i];
-                const dx = particle.x - mouse.x;
-                const dy = particle.y - mouse.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < clickRadius) {
-                    const forceDirectionX = dx / distance;
-                    const forceDirectionY = dy / distance;
-                    // Чем ближе к центру клика, тем слабее начальный толчок, чтобы не было слишком резко
-                    // и сильнее отталкиваем те, что на краю волны. Или наоборот.
-                    // В данном случае, отталкиваем сильнее те, что ближе
-                    const force = (clickRadius - distance) / clickRadius * clickStrength;
-                    
-                    particle.speedX += forceDirectionX * force * 0.1; // Уменьшаем влияние, чтобы не улетали слишком быстро
-                    particle.speedY += forceDirectionY * force * 0.1;
-                }
-            }
-        });
-
-
+        // Настраиваем размер canvas на весь экран
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
+            canvas.width = window.innerWidth - materialPalette.offsetWidth;
             canvas.height = window.innerHeight;
-            // Переинициализация частиц при изменении размера, чтобы они распределились по новому пространству
-            // или просто обновить их положение, если не хотим терять текущее состояние.
-            // Для простоты, переинициализируем.
-            init();
         }
-        resizeCanvas(); // Первоначальная установка размера
         window.addEventListener('resize', resizeCanvas);
+        resizeCanvas(); // Изначальная установка размера
 
-
+        // --- Класс Particle ---
         class Particle {
-            constructor(x, y, size, speedX, speedY, color) {
+            constructor(x, y, material) {
                 this.x = x;
                 this.y = y;
-                this.originalX = x; // Для эффекта возвращения
-                this.originalY = y; // Для эффекта возвращения
-                this.size = size;
-                this.speedX = speedX;
-                this.speedY = speedY;
-                this.color = color;
-                this.density = (Math.random() * 30) + 1; // Для эффекта параллакса от мыши
+                this.vx = 0; // Скорость по X
+                this.vy = 0; // Скорость по Y
+                this.material = material;
+                this.radius = PARTICLE_SIZE;
+                this.mass = 1;
+                this.density = 1;
+                this.friction = 0.9;
+                this.bounciness = 0.2;
+                this.isStatic = false; // Неподвижный объект
+                this.isAffectedByGravity = true;
+                this.remove = false; // Флаг для удаления частицы
+                this.life = -1; // Для материалов с ограниченным временем жизни
+
+                this.setColorAndProperties(material);
             }
 
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+            setColorAndProperties(material) {
+                switch (material) {
+                    case 'sand':
+                        this.color = '#F4A460'; // Песочный
+                        this.density = 1.5;
+                        this.friction = 0.8;
+                        this.bounciness = 0.3;
+                        break;
+                    case 'water':
+                        this.color = 'rgba(135, 206, 235, 0.7)'; // Небесно-голубой, прозрачный
+                        this.density = 0.8;
+                        this.friction = 0.5;
+                        this.bounciness = 0.1;
+                        break;
+                    case 'stone':
+                        this.color = '#808080'; // Серый
+                        this.density = 2.5;
+                        this.friction = 0.95;
+                        this.bounciness = 0.1;
+                        break;
+                    case 'bomb':
+                        this.color = '#FF0000'; // Красный
+                        this.radius = PARTICLE_SIZE * 2;
+                        this.detonated = false;
+                        this.detonationTimer = 180; // 3 секунды при 60 FPS
+                        this.isAffectedByGravity = true;
+                        break;
+                    case 'smoke':
+                        this.color = 'rgba(150, 150, 150, 0.4)'; // Прозрачный серый
+                        this.radius = PARTICLE_SIZE * 0.8;
+                        this.isAffectedByGravity = false; // Дым поднимается
+                        this.friction = 0.1;
+                        this.vx = (Math.random() - 0.5) * 0.2; // Начальное случайное движение
+                        this.vy = -0.5; // Начальное движение вверх
+                        this.life = 150; // Время жизни дыма
+                        break;
+                    case 'fire':
+                        this.color = 'rgba(255, 165, 0, 0.6)'; // Оранжевый, прозрачный
+                        this.radius = PARTICLE_SIZE * 1.2;
+                        this.isAffectedByGravity = false; // Огонь поднимается
+                        this.friction = 0.05;
+                        this.vx = (Math.random() - 0.5) * 0.3;
+                        this.vy = -0.8;
+                        this.life = 60; // Время жизни огня
+                        break;
+                    case 'wall':
+                        this.color = '#555555'; // Темно-серый
+                        this.isStatic = true; // Стены неподвижны
+                        this.isAffectedByGravity = false;
+                        this.radius = PARTICLE_SIZE; // Можно сделать больше для стен, или использовать клетки
+                        break;
+                    default:
+                        this.color = '#FFFFFF'; // Белый по умолчанию
+                }
             }
 
             update() {
-                // Взаимодействие с мышью (отталкивание)
-                if (mouse.x !== undefined && mouse.y !== undefined) {
-                    const dxMouse = this.x - mouse.x;
-                    const dyMouse = this.y - mouse.y;
-                    const distanceMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
-                    const repulsionStrength = 3; // Сила отталкивания от курсора
+                if (this.isStatic) return;
 
-                    if (distanceMouse < mouse.radius) {
-                        const forceDirectionX = dxMouse / distanceMouse;
-                        const forceDirectionY = dyMouse / distanceMouse;
-                        // Сила отталкивания, убывающая с расстоянием от центра курсора
-                        const force = (mouse.radius - distanceMouse) / mouse.radius;
-                        
-                        this.x += forceDirectionX * force * repulsionStrength;
-                        this.y += forceDirectionY * force * repulsionStrength;
+                // Уменьшение времени жизни для некоторых материалов
+                if (this.life > 0) {
+                    this.life--;
+                    if (this.life <= 0) {
+                        this.remove = true;
+                        return;
                     }
                 }
 
-                // Отталкивание от краев экрана
-                if (this.x + this.size > canvas.width || this.x - this.size < 0) {
-                    this.speedX = -this.speedX;
-                    // Корректировка, чтобы не застревали в стенах после отталкивания мышью
-                    if (this.x + this.size > canvas.width) this.x = canvas.width - this.size;
-                    if (this.x - this.size < 0) this.x = this.size;
+                // Логика для дыма и огня
+                if (this.material === 'smoke') {
+                    this.color = `rgba(150, 150, 150, ${this.life / 150 * 0.4})`;
+                    this.x += this.vx; // Дым дрейфует
+                    this.y += this.vy;
+                    // Рассеивание
+                    this.vx *= 0.98;
+                    this.vy *= 0.98;
+                    this.radius *= 1.01; // Дым расширяется
+                } else if (this.material === 'fire') {
+                    this.color = `rgba(255, ${165 + Math.floor(this.life / 60 * 90)}, 0, ${this.life / 60 * 0.6})`; // Меняем цвет к желтому
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vx *= 0.95;
+                    this.vy *= 0.95;
+                    this.radius *= 1.02; // Огонь расширяется
+                } else {
+                    // Гравитация для обычных материалов
+                    if (this.isAffectedByGravity) {
+                        this.vy += GRAVITY;
+                    }
+
+                    // Обновление позиции
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Применение трения
+                    this.vx *= this.friction;
+                    this.vy *= this.friction;
+
+                    // Коллизии со стенами canvas
+                    if (this.x - this.radius < 0) {
+                        this.x = this.radius;
+                        this.vx *= -this.bounciness;
+                    } else if (this.x + this.radius > canvas.width) {
+                        this.x = canvas.width - this.radius;
+                        this.vx *= -this.bounciness;
+                    }
+
+                    if (this.y - this.radius < 0) {
+                        this.y = this.radius;
+                        this.vy *= -this.bounciness;
+                    } else if (this.y + this.radius > canvas.height) {
+                        this.y = canvas.height - this.radius;
+                        this.vy *= -this.bounciness;
+                        if (this.material === 'stone' && Math.abs(this.vy) < 0.2 && Math.abs(this.vx) < 0.2) {
+                            // Если камень почти остановился на дне, сделать его статичным
+                            this.isStatic = true;
+                            this.vx = 0;
+                            this.vy = 0;
+                        }
+                    }
                 }
-                if (this.y + this.size > canvas.height || this.y - this.size < 0) {
-                    this.speedY = -this.speedY;
-                    if (this.y + this.size > canvas.height) this.y = canvas.height - this.size;
-                    if (this.y - this.size < 0) this.y = this.size;
+
+
+                // Логика для бомбы
+                if (this.material === 'bomb' && !this.detonated) {
+                    this.detonationTimer--;
+                    if (this.detonationTimer <= 0) {
+                        this.detonate();
+                    }
                 }
-                
-                // Ограничение максимальной скорости, чтобы частицы не "сходили с ума" после клика
-                const maxSpeed = 2;
-                if (Math.abs(this.speedX) > maxSpeed) this.speedX = Math.sign(this.speedX) * maxSpeed;
-                if (Math.abs(this.speedY) > maxSpeed) this.speedY = Math.sign(this.speedY) * maxSpeed;
 
+                // Простое взаимодействие между частицами (требует оптимизации для большого количества)
+                // Для песка, воды: имитация "стекания" и "распространения"
+                if (this.material === 'sand' || this.material === 'water') {
+                    // Проверяем, есть ли место для перемещения вниз
+                    const targetY = this.y + this.radius * 2;
+                    if (targetY < canvas.height) {
+                        let canMoveDown = true;
+                        // Проверяем, нет ли частицы прямо под нами
+                        for (const p of particles) {
+                            if (p !== this && p.material !== 'smoke' && p.material !== 'fire' && !p.remove && Math.hypot(p.x - this.x, p.y - targetY) < this.radius + p.radius) {
+                                canMoveDown = false;
+                                break;
+                            }
+                        }
 
-                this.x += this.speedX;
-                this.y += this.speedY;
+                        if (!canMoveDown) {
+                            // Если нельзя упасть вниз, пробуем стечь влево или вправо
+                            const tryLeft = Math.random() < 0.5;
+                            const targetX = tryLeft ? this.x - this.radius * 2 : this.x + this.radius * 2;
+                            let canMoveSide = true;
 
-                this.draw();
-            }
-        }
-
-        function init() {
-            particlesArray = [];
-            const numberOfParticles = Math.floor((canvas.width * canvas.height) / 15000); // Динамическое кол-во частиц
-            const colors = ['#e0e0e0', '#c7c7c7', '#a0a0a0', '#8c8c8c', '#707070'];
-
-            for (let i = 0; i < numberOfParticles; i++) {
-                const size = Math.random() * 2.5 + 1; // Размер от 1 до 3.5
-                const x = Math.random() * (canvas.width - size * 2) + size;
-                const y = Math.random() * (canvas.height - size * 2) + size;
-                const speedX = (Math.random() * 0.6 - 0.3); // Скорость по X
-                const speedY = (Math.random() * 0.6 - 0.3); // Скорость по Y
-                const color = colors[Math.floor(Math.random() * colors.length)];
-                particlesArray.push(new Particle(x, y, size, speedX, speedY, color));
-            }
-        }
-
-        function connectParticles() {
-            const maxDistance = 120; // Увеличим для лучшей видимости
-            // Динамическая прозрачность линий в зависимости от расстояния до мыши
-            let lineOpacity = 0.05; 
-            if (mouse.x !== undefined && mouse.y !== undefined) {
-                 lineOpacity = 0.02; // Менее заметные линии когда мышь активна
-            }
-
-
-            for (let a = 0; a < particlesArray.length; a++) {
-                for (let b = a + 1; b < particlesArray.length; b++) {
-                    const dx = particlesArray[a].x - particlesArray[b].x;
-                    const dy = particlesArray[a].y - particlesArray[b].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < maxDistance) {
-                        const opacity = Math.min(0.3, (1 - (distance / maxDistance)) * 0.5 + lineOpacity); // Делаем линии более прозрачными на расстоянии
-                        ctx.strokeStyle = `rgba(200, 200, 220, ${opacity})`;
-                        ctx.beginPath();
-                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                        ctx.lineWidth = 0.8; // Немного толще линии
-                        ctx.stroke();
+                            // Проверяем, нет ли частицы сбоку
+                            for (const p of particles) {
+                                if (p !== this && p.material !== 'smoke' && p.material !== 'fire' && !p.remove && Math.hypot(p.x - targetX, p.y - targetY) < this.radius + p.radius) {
+                                    canMoveSide = false;
+                                    break;
+                                }
+                            }
+                            if (canMoveSide) {
+                                this.vx = tryLeft ? -0.5 : 0.5; // Небольшой импульс в сторону
+                            } else {
+                                this.vx = 0; // Останавливаем движение по X, если заблокировано
+                            }
+                        } else {
+                            this.vx = 0; // Если можно упасть, убираем боковое движение
+                        }
+                    } else {
+                        this.vx = 0; // Если достигли дна, убираем боковое движение
                     }
                 }
             }
-        }
 
-        function animationLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            if (particlesArray) { // Убедимся, что массив инициализирован
-                 for (let i = 0; i < particlesArray.length; i++) {
-                    particlesArray[i].update();
+
+            detonate() {
+                this.detonated = true;
+                // Создаем взрывную волну и частицы дыма/огня
+                const explosionRadius = 150;
+                const explosionForce = 20;
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    if (p === this) continue; // Пропускаем саму бомбу
+
+                    const dist = Math.hypot(p.x - this.x, p.y - this.y);
+                    if (dist < explosionRadius) {
+                        const angle = Math.atan2(p.y - this.y, p.x - this.x);
+                        const force = (explosionRadius - dist) / explosionRadius * explosionForce; // Сила взрыва уменьшается с расстоянием
+                        p.vx += Math.cos(angle) * force;
+                        p.vy += Math.sin(angle) * force;
+
+                        // Если частица достаточно близко, превращаем ее в дым или огонь
+                        if (dist < explosionRadius * 0.5 && p.material !== 'bomb' && p.material !== 'wall') {
+                            if (Math.random() < 0.5) {
+                                p.material = 'smoke';
+                                p.setColorAndProperties('smoke');
+                                p.vx += (Math.random() - 0.5) * 1;
+                                p.vy += (Math.random() - 0.5) * 1;
+                            } else {
+                                p.material = 'fire';
+                                p.setColorAndProperties('fire');
+                                p.vx += (Math.random() - 0.5) * 1.5;
+                                p.vy += (Math.random() - 0.5) * 1.5;
+                            }
+                        }
+                    }
                 }
-                connectParticles();
+                // Удаляем бомбу
+                this.remove = true;
+
+                // Добавляем дополнительные частицы дыма/огня в эпицентре взрыва
+                for(let i = 0; i < 50; i++) {
+                    const materialType = Math.random() < 0.7 ? 'smoke' : 'fire';
+                    const newP = new Particle(this.x + (Math.random() - 0.5) * 20, this.y + (Math.random() - 0.5) * 20, materialType);
+                    newP.vx += (Math.random() - 0.5) * 5;
+                    newP.vy += (Math.random() - 0.5) * 5;
+                    particles.push(newP);
+                }
             }
-            requestAnimationFrame(animationLoop);
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+            }
         }
 
-        // Запуск
-        // init(); // resizeCanvas вызовет init()
-        animationLoop();
+        // --- Игровой цикл ---
+        function update() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                if (p.remove) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
 
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Очищаем canvas
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].draw();
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // --- Обработчики событий ---
+
+        let isMouseDown = false;
+        canvas.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            addParticles(e);
+        });
+        canvas.addEventListener('mouseup', () => {
+            isMouseDown = false;
+        });
+        canvas.addEventListener('mousemove', (e) => {
+            if (isMouseDown) {
+                addParticles(e);
+            }
+        });
+
+        function addParticles(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Добавляем несколько частиц за раз для эффекта "рисования"
+            const numParticles = selectedMaterial === 'wall' ? 1 : 5; // Стены лучше добавлять по одной, чтобы не "дырявить"
+            for (let i = 0; i < numParticles; i++) {
+                const offsetX = (Math.random() - 0.5) * PARTICLE_SIZE * 2;
+                const offsetY = (Math.random() - 0.5) * PARTICLE_SIZE * 2;
+                particles.push(new Particle(x + offsetX, y + offsetY, selectedMaterial));
+            }
+        }
+
+
+        // Выбор материала
+        materialPalette.addEventListener('click', (e) => {
+            if (e.target.classList.contains('material-btn')) {
+                // Снимаем активность со всех кнопок
+                document.querySelectorAll('.material-btn').forEach(btn => btn.classList.remove('active'));
+                // Устанавливаем активность на выбранной кнопке
+                e.target.classList.add('active');
+                selectedMaterial = e.target.dataset.material;
+            }
+        });
+
+        // Запускаем игровой цикл
+        gameLoop();
+
+        // Активируем кнопку песка по умолчанию
+        document.querySelector('.material-btn[data-material="sand"]').classList.add('active');
     </script>
 </body>
 </html>
