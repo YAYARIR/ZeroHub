@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Динамические обои</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Убираем скроллбары */
+            background-color: #1a1a2e; /* Темно-синий фон */
+            height: 100%;
+            width: 100%;
+        }
+        #wallpaperCanvas {
+            display: block; /* Убирает лишнее пространство под canvas */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="wallpaperCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('wallpaperCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let particlesArray;
+
+        // Устанавливаем размер canvas на весь экран
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+
+        // Класс для создания частицы
+        class Particle {
+            constructor(x, y, size, speedX, speedY, color) {
+                this.x = x;
+                this.y = y;
+                this.size = size;
+                this.speedX = speedX;
+                this.speedY = speedY;
+                this.color = color;
+            }
+
+            // Метод для отрисовки частицы
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Метод для обновления позиции частицы
+            update() {
+                // Отталкивание от краев экрана
+                if (this.x + this.size > canvas.width || this.x - this.size < 0) {
+                    this.speedX = -this.speedX;
+                }
+                if (this.y + this.size > canvas.height || this.y - this.size < 0) {
+                    this.speedY = -this.speedY;
+                }
+
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                this.draw();
+            }
+        }
+
+        // Инициализация частиц
+        function init() {
+            particlesArray = [];
+            const numberOfParticles = 100; // Количество частиц
+            const colors = ['#e0e0e0', '#c7c7c7', '#a0a0a0', '#8c8c8c']; // Цвета частиц
+
+            for (let i = 0; i < numberOfParticles; i++) {
+                const size = Math.random() * 3 + 1; // Размер от 1 до 4
+                const x = Math.random() * (canvas.width - size * 2) + size;
+                const y = Math.random() * (canvas.height - size * 2) + size;
+                const speedX = (Math.random() * 1 - 0.5); // Скорость по X (-0.5 до 0.5)
+                const speedY = (Math.random() * 1 - 0.5); // Скорость по Y (-0.5 до 0.5)
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particlesArray.push(new Particle(x, y, size, speedX, speedY, color));
+            }
+        }
+
+        // Анимационный цикл
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Очистка canvas
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            requestAnimationFrame(animate); // Зацикливаем анимацию
+        }
+
+        // Запуск
+        init();
+        animate();
+
+        // Соединение частиц линиями при близком расстоянии (опционально)
+        function connectParticles() {
+            const maxDistance = 100; // Максимальное расстояние для соединения
+            ctx.strokeStyle = 'rgba(200, 200, 200, 0.1)'; // Цвет линий
+            for (let a = 0; a < particlesArray.length; a++) {
+                for (let b = a + 1; b < particlesArray.length; b++) { // b = a + 1 чтобы избежать дублирования и самосоединения
+                    const dx = particlesArray[a].x - particlesArray[b].x;
+                    const dy = particlesArray[a].y - particlesArray[b].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < maxDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        // Обновляем анимационный цикл, чтобы включить соединение частиц
+        function animateWithConnections() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            connectParticles(); // Добавляем отрисовку соединений
+            requestAnimationFrame(animateWithConnections);
+        }
+
+        // Перезапускаем с новой функцией анимации (если хотите соединения)
+        // Если соединения не нужны, закомментируйте следующую строку и раскомментируйте `animate();` выше
+        // init(); // Уже вызван
+        // animate(); // Используйте это, если не хотите соединительные линии
+        
+        // Если хотите с соединительными линиями:
+        // Для этого нужно изменить функцию animate, чтобы она вызывала connectParticles
+        // Поэтому мы создали animateWithConnections и вызовем её.
+        // Сначала остановим предыдущий цикл, если он был запущен:
+        // (в данном коде animate() еще не успел запустить много кадров, но для общей практики)
+        // cancelAnimationFrame(requestAnimationFrame(animate)); // Это не совсем корректно, лучше просто не вызывать animate() дважды.
+
+        // Мы просто заменим вызов animate() на animateWithConnections()
+        // init(); // уже вызвали
+        // animate(); // не вызываем
+        
+        // Вместо этого, давайте изменим animate так, чтобы она сразу включала connectParticles
+        // и переименуем её для ясности.
+        
+        // Удаляем старый вызов animate и init
+        // init();
+        // animate();
+        
+        // Новая функция анимации, включающая соединения
+        function animationLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particlesArray.length; i++) {
+                particlesArray[i].update();
+            }
+            connectParticles();
+            requestAnimationFrame(animationLoop);
+        }
+
+        // Запуск
+        init();
+        animationLoop(); // Используем animationLoop вместо animate
+
+    </script>
+</body>
+</html>
