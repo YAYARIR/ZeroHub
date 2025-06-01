@@ -1,218 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Audio Waves Wallpaper with Blurred Background (Enhanced)</title>
+<title>Parallax Blurred Background Wallpaper</title>
 <style>
   body {
     margin: 0;
-    overflow: hidden;
-    display: flex;
+    overflow: hidden; /* Скрываем полосы прокрутки, так как это обои */
+    height: 100vh; /* Занимаем всю высоту экрана */
+    width: 100vw;  /* Занимаем всю ширину экрана */
+    display: flex; /* Используем flexbox для центрирования содержимого, если оно будет */
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    width: 100vw;
+
+    /* --- Настройки фонового изображения --- */
     /* Укажи URL твоего изображения здесь */
     background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png'); /* ЗАМЕНИ НА СВОЙ URL ИЗОБРАЖЕНИЯ */
-    background-size: cover;
-    background-position: center;
-    filter: blur(8px); /* Насколько сильно размыть */
-    -webkit-filter: blur(8px);
+    background-size: cover; /* Изображение покроет весь элемент */
+    background-position: center; /* Центрируем изображение */
+    background-attachment: fixed; /* ЭТО КЛЮЧЕВОЕ СВОЙСТВО ДЛЯ ПАРАЛЛАКСА */
+
+    /* --- Эффект размытия --- */
+    filter: blur(8px); /* Насколько сильно размыть (больше px = больше размытие) */
+    -webkit-filter: blur(8px); /* Для совместимости с некоторыми браузерами */
   }
 
-  .visualizer-container {
-    position: absolute;
-    top: 0;
-    left: 0;
+  /* Дополнительный CSS для демонстрации параллакса (можно удалить для обоев) */
+  /* Если вы хотите увидеть эффект параллакса, раскомментируйте этот блок,
+     и он добавит прокручиваемое содержимое. Для Lively Wallpaper это не нужно,
+     так как эффект часто проявляется при движении мыши или изменении размеров. */
+  /*
+  .content {
+    height: 200vh;
     width: 100%;
-    height: 100%;
-    pointer-events: none; /* Чтобы не мешать кликам по рабочему столу */
-    /* ОТЛАДКА: Временно добавь рамку, чтобы убедиться, что контейнер виден */
-    /* border: 1px solid red; */
+    color: white;
+    text-align: center;
+    font-size: 3em;
+    padding-top: 50vh;
+    box-sizing: border-box;
+    pointer-events: none;
   }
-
-  .bar {
-    position: absolute;
-    background-color: rgb(0, 255, 255); /* Яркий цвет для лучшей видимости: циановый */
-    box-shadow: 0 0 5px rgba(0, 255, 255, 0.8), 0 0 10px rgba(0, 255, 255, 0.5); /* Неоновый эффект */
-    opacity: 0.8; /* Небольшая прозрачность */
-    /* Минимальные размеры для баров, чтобы они всегда были видны */
-    min-width: 2px;
-    min-height: 2px;
-  }
-
-  /* Позиционирование и трансформации для разных сторон */
-  .bar.top {
-    top: 0;
-    transform-origin: top center; /* Центр сверху */
-  }
-  .bar.bottom {
-    bottom: 0;
-    transform-origin: bottom center; /* Центр снизу */
-  }
-  .bar.left {
-    left: 0;
-    transform-origin: center left; /* Центр слева */
-  }
-  .bar.right {
-    right: 0;
-    transform-origin: center right; /* Центр справа */
-  }
+  */
 </style>
 </head>
 <body>
-  <div class="visualizer-container"></div>
-  <audio id="audioPlayer" controls loop style="display:none;">
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-<script>
-  // Проверяем поддержку AudioContext
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  if (!AudioContext) {
-    console.error("Web Audio API is not supported in this browser.");
-    alert("Ваш браузер не поддерживает Web Audio API. Эквалайзер не будет работать.");
-  }
-
-  const audioCtx = new AudioContext();
-  const audioElement = document.getElementById('audioPlayer');
-  const source = audioCtx.createMediaElementSource(audioElement);
-  const analyser = audioCtx.createAnalyser();
-
-  // Настройки анализатора
-  analyser.fftSize = 256; // Количество частотных диапазонов
-  const bufferLength = analyser.frequencyBinData.length; // Длина массива данных частот
-  const dataArray = new Uint8Array(bufferLength); // Массив для хранения данных частот
-
-  source.connect(analyser);
-  analyser.connect(audioCtx.destination);
-
-  const visualizerContainer = document.querySelector('.visualizer-container');
-  const barBaseThickness = 4; // Базовая толщина полос в пикселях
-  const amplitudeMultiplier = 1.5; // Увеличивает реакцию баров на громкость
-  const maxWaveHeight = 100; // Максимальная высота/ширина волны в пикселях (относительно barBaseThickness)
-
-  let bars = []; // Массив для хранения DOM-элементов полос
-
-  // Функция для создания баров по периметру
-  function createBars() {
-    console.log("Creating bars...");
-    visualizerContainer.innerHTML = ''; // Очищаем контейнер перед пересозданием
-    bars = []; // Очищаем массив баров
-
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-
-    // Расчет количества баров для каждой стороны
-    // Делим на 2, потому что каждый бар будет иметь базовую толщину + динамическую часть
-    const numHorizontalBars = Math.floor(screenWidth / (barBaseThickness * 2));
-    const numVerticalBars = Math.floor(screenHeight / (barBaseThickness * 2)) - 2; // -2 для углов
-
-    // Создаем бары для верхней и нижней сторон
-    for (let i = 0; i < numHorizontalBars; i++) {
-      const xPos = (screenWidth / numHorizontalBars) * i;
-      const calculatedBarWidth = (screenWidth / numHorizontalBars);
-
-      // Top bar
-      const barTop = document.createElement('div');
-      barTop.classList.add('bar', 'top');
-      barTop.style.left = `${xPos}px`;
-      barTop.style.width = `${calculatedBarWidth + 1}px`; // +1px для избежания пробелов
-      barTop.style.height = `${barBaseThickness}px`; // Начальная высота
-      bars.push(barTop);
-      visualizerContainer.appendChild(barTop);
-
-      // Bottom bar
-      const barBottom = document.createElement('div');
-      barBottom.classList.add('bar', 'bottom');
-      barBottom.style.left = `${xPos}px`;
-      barBottom.style.width = `${calculatedBarWidth + 1}px`;
-      barBottom.style.height = `${barBaseThickness}px`; // Начальная высота
-      bars.push(barBottom);
-      visualizerContainer.appendChild(barBottom);
-    }
-
-    // Создаем бары для левой и правой сторон
-    for (let i = 0; i < numVerticalBars; i++) {
-      const yPos = (screenHeight / (numVerticalBars + 2)) * (i + 1); // +1 чтобы избежать углов, +2 для общей пропорции
-      const calculatedBarHeight = (screenHeight / (numVerticalBars + 2));
-
-      // Left bar
-      const barLeft = document.createElement('div');
-      barLeft.classList.add('bar', 'left');
-      barLeft.style.top = `${yPos}px`;
-      barLeft.style.height = `${calculatedBarHeight + 1}px`; // +1px для избежания пробелов
-      barLeft.style.width = `${barBaseThickness}px`; // Начальная ширина
-      bars.push(barLeft);
-      visualizerContainer.appendChild(barLeft);
-
-      // Right bar
-      const barRight = document.createElement('div');
-      barRight.classList.add('bar', 'right');
-      barRight.style.top = `${yPos}px`;
-      barRight.style.height = `${calculatedBarHeight + 1}px`;
-      barRight.style.width = `${barBaseThickness}px`; // Начальная ширина
-      bars.push(barRight);
-      visualizerContainer.appendChild(barRight);
-    }
-    console.log(`Total bars created: ${bars.length}`);
-  }
-
-  // Функция для анимации баров
-  function animateBars() {
-    requestAnimationFrame(animateBars); // Запрашиваем следующий кадр анимации
-
-    if (!analyser || !dataArray || bars.length === 0) {
-      // console.log("Analyser, dataArray, or bars not ready.");
-      return; // Проверка, что аудио контекст инициализирован и бары созданы
-    }
-
-    analyser.getByteFrequencyData(dataArray); // Получаем данные частот
-
-    const totalBars = bars.length;
-    for (let i = 0; i < totalBars; i++) {
-      // Выбираем данные частот для текущего бара.
-      // Используем остаток от деления на bufferLength, чтобы циклично использовать данные
-      let dataIndex = Math.floor(i % bufferLength);
-      let barAmplitude = dataArray[dataIndex]; // Амплитуда частоты (0-255)
-
-      // Нормализуем амплитуду для масштабирования волны
-      let waveMagnitude = (barAmplitude / 255) * maxWaveHeight * amplitudeMultiplier;
-      // Убедимся, что волна не уходит в минус и имеет минимальный размер
-      waveMagnitude = Math.max(0, waveMagnitude); // Убеждаемся, что не отрицательное значение
-
-      // Применяем высоту/ширину в зависимости от стороны
-      if (bars[i].classList.contains('top') || bars[i].classList.contains('bottom')) {
-        // Для горизонтальных баров изменяем высоту
-        bars[i].style.height = `${barBaseThickness + waveMagnitude}px`;
-      } else {
-        // Для вертикальных баров изменяем ширину
-        bars[i].style.width = `${barBaseThickness + waveMagnitude}px`;
-      }
-      // Опционально: можно изменять цвет в зависимости от амплитуды
-      // const hue = (barAmplitude / 255) * 120 + 200; // Оттенок от синего до фиолетового
-      // bars[i].style.backgroundColor = `hsl(${hue}, 100%, 70%)`;
-    }
-  }
-
-  // Запускаем воспроизведение аудио при загрузке.
-  // Это может быть заблокировано браузером без пользовательского взаимодействия.
-  audioElement.play().then(() => {
-    console.log("Audio started playing.");
-    // Начинаем анимацию только после успешного воспроизведения аудио
-    animateBars();
-  }).catch(e => {
-    console.warn("Audio auto-play blocked. Please interact with the page (e.g., click) to start audio and visualizer.", e);
-    // Если автовоспроизведение заблокировано, можно показать подсказку или кнопку
-    // В Lively это может потребовать ручного "клика" на обоине
-  });
-
-  // Пересоздаем бары при изменении размера окна
-  window.addEventListener('resize', createBars);
-
-  // Инициализация при загрузке страницы
-  createBars();
-  // Анимация запускается после успешного play()
-</script>
-</body>
+  </body>
 </html>
