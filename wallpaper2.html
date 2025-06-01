@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Audio Waves Wallpaper</title>
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    /* Укажи URL твоего изображения здесь */
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png'); /* ЗАМЕНИ НА СВОЙ URL ИЗОБРАЖЕНИЯ */
+    background-size: cover;
+    background-position: center;
+    filter: blur(8px); /* Насколько сильно размыть */
+    -webkit-filter: blur(8px);
+  }
+
+  .visualizer-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Чтобы не мешать кликам по рабочему столу */
+  }
+
+  .bar {
+    position: absolute;
+    width: 4px; /* Ширина одного бара */
+    background-color: rgba(255, 255, 255, 0.7); /* Цвет волн */
+    bottom: 0; /* Прикрепить к низу */
+    transform-origin: bottom; /* Точка трансформации для анимации */
+    transition: height 0.05s linear; /* Плавность анимации */
+  }
+
+  .bar.top { top: 0; bottom: auto; transform-origin: top; }
+  .bar.left { left: 0; width: auto; height: 4px; right: auto; transform-origin: left; }
+  .bar.right { right: 0; width: auto; height: 4px; left: auto; transform-origin: right; }
+</style>
+</head>
+<body>
+  <div class="visualizer-container"></div>
+  <audio id="audioPlayer" controls loop style="display:none;">
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+<script>
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const audioElement = document.getElementById('audioPlayer');
+  const source = audioCtx.createMediaElementSource(audioElement);
+  const analyser = audioCtx.createAnalyser();
+
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  analyser.fftSize = 256;
+  const bufferLength = analyser.frequencyBinData.length;
+  const dataArray = new Uint8Array(bufferLength);
+
+  const visualizerContainer = document.querySelector('.visualizer-container');
+  const numberOfBars = 60; // Количество баров по каждой стороне
+  const barWidth = 4; // Ширина бара (в пикселях)
+
+  let bars = [];
+
+  // Создаем бары по периметру
+  function createBars() {
+    // Top
+    for (let i = 0; i < numberOfBars; i++) {
+      const bar = document.createElement('div');
+      bar.classList.add('bar', 'top');
+      bar.style.left = `${(window.innerWidth / numberOfBars) * i}px`;
+      bars.push(bar);
+      visualizerContainer.appendChild(bar);
+    }
+    // Bottom
+    for (let i = 0; i < numberOfBars; i++) {
+      const bar = document.createElement('div');
+      bar.classList.add('bar');
+      bar.style.left = `${(window.innerWidth / numberOfBars) * i}px`;
+      bars.push(bar);
+      visualizerContainer.appendChild(bar);
+    }
+    // Left (с учетом уже созданных углов)
+    for (let i = 0; i < Math.floor(window.innerHeight / barWidth) - 2; i++) { // -2 для углов
+      const bar = document.createElement('div');
+      bar.classList.add('bar', 'left');
+      bar.style.top = `${(window.innerHeight / (Math.floor(window.innerHeight / barWidth) - 2)) * i}px`;
+      bars.push(bar);
+      visualizerContainer.appendChild(bar);
+    }
+    // Right (с учетом уже созданных углов)
+    for (let i = 0; i < Math.floor(window.innerHeight / barWidth) - 2; i++) { // -2 для углов
+      const bar = document.createElement('div');
+      bar.classList.add('bar', 'right');
+      bar.style.top = `${(window.innerHeight / (Math.floor(window.innerHeight / barWidth) - 2)) * i}px`;
+      bars.push(bar);
+      visualizerContainer.appendChild(bar);
+    }
+  }
+
+
+  function animateBars() {
+    requestAnimationFrame(animateBars);
+    analyser.getByteFrequencyData(dataArray);
+
+    const averageHeight = dataArray.reduce((sum, val) => sum + val, 0) / bufferLength;
+
+    // Распределяем высоту по барам
+    const totalBars = bars.length;
+    for (let i = 0; i < totalBars; i++) {
+      let dataIndex = Math.floor(i % bufferLength);
+      let barHeight = dataArray[dataIndex] * 0.8; // Множитель для регулировки высоты
+      barHeight = Math.max(2, barHeight); // Минимальная высота, чтобы бары были видны
+
+      // Применяем к разным сторонам
+      if (bars[i].classList.contains('left') || bars[i].classList.contains('right')) {
+        bars[i].style.width = `${barHeight}px`; // Для вертикальных баров изменяем ширину
+      } else {
+        bars[i].style.height = `${barHeight}px`; // Для горизонтальных баров изменяем высоту
+      }
+    }
+  }
+
+  // Запускаем воспроизведение аудио при загрузке (чтобы визуализатор начал работать)
+  audioElement.play().catch(e => console.error("Error playing audio:", e));
+
+  // Пересоздаем бары при изменении размера окна
+  window.addEventListener('resize', () => {
+    visualizerContainer.innerHTML = ''; // Очищаем старые бары
+    bars = [];
+    createBars();
+  });
+
+  createBars(); // Создаем бары при первой загрузке
+  animateBars(); // Запускаем анимацию
+</script>
+</body>
+</html>
