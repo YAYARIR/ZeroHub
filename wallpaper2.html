@@ -1,47 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Parallax Blurred Background Wallpaper</title>
+<title>Mouse-Controlled Parallax Blurred Background</title>
 <style>
   body {
     margin: 0;
-    overflow: hidden; /* Скрываем полосы прокрутки, так как это обои */
+    overflow: hidden; /* Скрываем полосы прокрутки */
     height: 100vh; /* Занимаем всю высоту экрана */
     width: 100vw;  /* Занимаем всю ширину экрана */
-    display: flex; /* Используем flexbox для центрирования содержимого, если оно будет */
+    display: flex;
     justify-content: center;
     align-items: center;
 
     /* --- Настройки фонового изображения --- */
     /* Укажи URL твоего изображения здесь */
     background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.png'); /* ЗАМЕНИ НА СВОЙ URL ИЗОБРАЖЕНИЯ */
-    background-size: cover; /* Изображение покроет весь элемент */
-    background-position: center; /* Центрируем изображение */
-    background-attachment: fixed; /* ЭТО КЛЮЧЕВОЕ СВОЙСТВО ДЛЯ ПАРАЛЛАКСА */
+    background-size: 110% 110%; /* Делаем изображение чуть больше, чтобы было что сдвигать */
+    background-position: center center; /* Начальное положение */
+    background-repeat: no-repeat; /* Предотвращаем повторение изображения */
 
     /* --- Эффект размытия --- */
-    filter: blur(8px); /* Насколько сильно размыть (больше px = больше размытие) */
-    -webkit-filter: blur(8px); /* Для совместимости с некоторыми браузерами */
-  }
+    filter: blur(8px); /* Насколько сильно размыть */
+    -webkit-filter: blur(8px);
 
-  /* Дополнительный CSS для демонстрации параллакса (можно удалить для обоев) */
-  /* Если вы хотите увидеть эффект параллакса, раскомментируйте этот блок,
-     и он добавит прокручиваемое содержимое. Для Lively Wallpaper это не нужно,
-     так как эффект часто проявляется при движении мыши или изменении размеров. */
-  /*
-  .content {
-    height: 200vh;
-    width: 100%;
-    color: white;
-    text-align: center;
-    font-size: 3em;
-    padding-top: 50vh;
-    box-sizing: border-box;
-    pointer-events: none;
+    /* Плавность движения фона */
+    transition: background-position 0.1s linear; /* Делаем движение более плавным */
   }
-  */
 </style>
 </head>
 <body>
-  </body>
+
+<script>
+  // Настройки параллакса
+  const parallaxStrength = 0.02; // Сила параллакс-эффекта (0.01 - слабый, 0.05 - сильный)
+
+  document.addEventListener('mousemove', (e) => {
+    // Получаем текущие координаты мыши относительно центра экрана
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+
+    // Вычисляем центр экрана
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+
+    // Вычисляем смещение мыши от центра
+    const offsetX = mouseX - centerX;
+    const offsetY = mouseY - centerY;
+
+    // Вычисляем новое положение фона
+    // Делим смещение на 10 (или другое число), чтобы фон двигался медленнее, чем мышь
+    const backgroundX = -(offsetX * parallaxStrength);
+    const backgroundY = -(offsetY * parallaxStrength);
+
+    // Применяем новое положение к фону body
+    // Используем 'center center' как базовую точку, чтобы смещение было от центра
+    document.body.style.backgroundPosition = `calc(50% + ${backgroundX}px) calc(50% + ${backgroundY}px)`;
+  });
+</script>
+</body>
 </html>
