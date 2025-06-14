@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузчик Файлов на GitHub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 0 auto 20px auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #message {
+            margin-top: 25px;
+            font-size: 1.1em;
+            color: #555;
+            word-break: break-all; /* Для длинных ссылок */
+        }
+        #message a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        #message a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Загрузить Файл на GitHub</h1>
+
+        <input type="file" id="fileInput">
+        <button id="uploadButton">Загрузить Файл</button>
+
+        <p id="message"></p>
+    </div>
+
+    <script>
+        // --- Настройте эти переменные ---
+        const GITHUB_USERNAME = 'YAYARIR'; // Например, 'john-doe'
+        const REPO_NAME = 'ZeroHub';       // Имя вашего репозитория, например, 'my-file-uploader'
+        const GITHUB_TOKEN = 'ВАШ_PERSONAL_ACCESS_TOKEN'; // ВСТАВЬТЕ СЮДА ВАШ PAT!
+        // --- Конец настроек ---
+
+        const fileInput = document.getElementById('fileInput');
+        const uploadButton = document.getElementById('uploadButton');
+        const messageDisplay = document.getElementById('message');
+
+        uploadButton.addEventListener('click', async () => {
+            const file = fileInput.files[0];
+
+            if (!file) {
+                messageDisplay.className = 'error';
+                messageDisplay.textContent = 'Пожалуйста, выберите файл для загрузки.';
+                return;
+            }
+
+            messageDisplay.className = '';
+            messageDisplay.textContent = 'Загрузка... Пожалуйста, подождите.';
+            uploadButton.disabled = true; // Отключаем кнопку во время загрузки
+
+            const fileName = file.name;
+            const filePath = `uploads/${fileName}`; // Папка 'uploads' в вашем репозитории
+            const commitMessage = `Upload: ${fileName}`;
+
+            try {
+                // 1. Прочитать содержимое файла как Base64
+                const fileContentBase64 = await readFileAsBase64(file);
+
+                // 2. Проверить, существует ли файл уже (опционально, но полезно для обновления)
+                let existingFileSha = null;
+                try {
+                    const responseCheck = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${filePath}`, {
+                        headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                    });
+                    if (responseCheck.ok) {
+                        const dataCheck = await responseCheck.json();
+                        existingFileSha = dataCheck.sha; // Получаем SHA существующего файла
+                    }
+                } catch (e) {
+                    // Ошибка, возможно, файл не существует, это нормально.
+                    console.log('Файл не существует или ошибка проверки:', e);
+                }
+
+
+                // 3. Сформировать тело запроса для GitHub API
+                const requestBody = {
+                    message: commitMessage,
+                    content: fileContentBase64,
+                    branch: 'main' // Или 'master', в зависимости от вашей основной ветки
+                };
+
+                if (existingFileSha) {
+                    requestBody.sha = existingFileSha; // Добавляем SHA, если файл существует (для обновления)
+                }
+
+                // 4. Отправить PUT запрос к GitHub API
+                const response = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${REPO_NAME}/contents/${filePath}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Ошибка GitHub API: ${response.status} - ${errorData.message}`);
+                }
+
+                const result = await response.json();
+                const downloadUrl = result.content.download_url || `https://raw.githubusercontent.com/${GITHUB_USERNAME}/${REPO_NAME}/main/${filePath}`;
+
+                messageDisplay.className = 'success';
+                messageDisplay.innerHTML = `Файл успешно загружен! <br> <a href="${downloadUrl}" target="_blank">Ссылка для скачивания</a>`;
+
+            } catch (error) {
+                console.error('Ошибка загрузки файла:', error);
+                messageDisplay.className = 'error';
+                messageDisplay.textContent = `Ошибка при загрузке файла: ${error.message}. Убедитесь, что токен и репозиторий настроены правильно.`;
+            } finally {
+                uploadButton.disabled = false; // Включаем кнопку обратно
+            }
+        });
+
+        // Вспомогательная функция для чтения файла как Base64
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    // Удаляем префикс "data:image/png;base64," и т.д.
+                    const base64String = reader.result.split(',')[1];
+                    resolve(base64String);
+                };
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>
