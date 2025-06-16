@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Хостинг</title>
+    <style>
+        /* Общие стили */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Навигация */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #007bff;
+        }
+
+        /* Секции */
+        section {
+            padding: 80px 20px;
+            text-align: center;
+        }
+
+        h1, h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        /* Секция Hero */
+        .hero-section {
+            background: linear-gradient(to right, #007bff, #0056b3);
+            color: #fff;
+            padding: 100px 20px;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .hero-section button {
+            background-color: #fff;
+            color: #007bff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .hero-section button:hover {
+            background-color: #e2e6ea;
+            color: #0056b3;
+        }
+
+        /* Секция Особенности */
+        .features-section {
+            background-color: #f8f9fa;
+        }
+
+        .feature-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .feature-item {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            text-align: left;
+        }
+
+        .feature-item h3 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        /* Секция Цены */
+        .pricing-section {
+            background-color: #fff;
+        }
+
+        .pricing-grid {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .price-card {
+            background-color: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .price-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .price-card.recommended {
+            border: 2px solid #007bff;
+            background-color: #eaf3ff;
+        }
+
+        .price-card h3 {
+            color: #007bff;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .price-card .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .price-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+
+        .price-card ul li {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .price-card button {
+            background-color: #007bff;
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .price-card button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Секция Контакты */
+        .contact-section {
+            background-color: #f8f9fa;
+        }
+
+        .contact-section form {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .contact-section input[type="text"],
+        .contact-section input[type="email"],
+        .contact-section textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .contact-section textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .contact-section button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .contact-section button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Футер */
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.9rem;
+        }
+
+        /* Медиа-запросы для адаптивности */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+            }
+
+            nav ul {
+                margin-top: 15px;
+            }
+
+            nav ul li {
+                margin: 0 10px;
+            }
+
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+
+            .feature-grid,
+            .pricing-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .feature-item,
+            .price-card {
+                width: 90%;
+                max-width: 400px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .hero-section p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Мой Хостинг</div>
+            <ul>
+                <li><a href="#features">Особенности</a></li>
+                <li><a href="#pricing">Цены</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="hero" class="hero-section">
+            <h1>Быстрый и Надежный Хостинг для Ваших Проектов</h1>
+            <p>Запустите свой сайт сегодня с нашими высокопроизводительными серверами и круглосуточной поддержкой.</p>
+            <button id="learnMoreBtn">Узнать больше</button>
+        </section>
+
+        <section id="features" class="features-section">
+            <h2>Почему Выбирают Нас?</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h3>Высокая Скорость</h3>
+                    <p>Оптимизированные сервера для максимальной производительности вашего сайта.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>24/7 Поддержка</h3>
+                    <p>Наша команда всегда готова помочь вам с любыми вопросами.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Безопасность</h3>
+                    <p>Современные решения для защиты ваших данных.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing-section">
+            <h2>Наши Тарифы</h2>
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3>Базовый</h3>
+                    <p class="price">$5.99/мес</p>
+                    <ul>
+                        <li>1 Домен</li>
+                        <li>5 ГБ Диска</li>
+                        <li>100 ГБ Трафика</li>
+                    </ul>
+                    <button>Выбрать</button>
+                </div>
+                <div class="price-card recommended">
+                    <h3>Стандартный</h3>
+                    <p class="price">$9.99/мес</p>
+                    <ul>
+                        <li>5 Доменов</li>
+                        <li>20 ГБ Диска</li>
+                        <li>Неограниченный Трафик</li>
+                    </ul>
+                    <button>Выбрать</button>
+                </div>
+                <div class="price-card">
+                    <h3>Премиум</h3>
+                    <p class="price">$19.99/мес</p>
+                    <ul>
+                        <li>Неограниченно Доменов</li>
+                        <li>50 ГБ Диска</li>
+                        <li>Неограниченный Трафик</li>
+                    </ul>
+                    <button>Выбрать</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-section">
+            <h2>Свяжитесь с Нами</h2>
+            <p>Есть вопросы? Напишите нам, и мы ответим как можно скорее!</p>
+            <form>
+                <input type="text" placeholder="Ваше Имя">
+                <input type="email" placeholder="Ваш Email">
+                <textarea placeholder="Ваше Сообщение"></textarea>
+                <button type="submit">Отправить</button>
+            </form>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Мой Хостинг. Все права защищены.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Плавная прокрутка для навигационных ссылок
+            document.querySelectorAll('nav ul li a').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - document.querySelector('header').offsetHeight, // Учитываем высоту хедера
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Пример интерактивности: Кнопка "Узнать больше" в секции Hero
+            const learnMoreBtn = document.getElementById('learnMoreBtn');
+            if (learnMoreBtn) {
+                learnMoreBtn.addEventListener('click', () => {
+                    const featuresSection = document.getElementById('features');
+                    if (featuresSection) {
+                        window.scrollTo({
+                            top: featuresSection.offsetTop - document.querySelector('header').offsetHeight,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            }
+
+            // Пример валидации формы (очень простая)
+            const contactForm = document.querySelector('.contact-section form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Предотвращаем стандартную отправку формы
+
+                    const nameInput = this.querySelector('input[type="text"]');
+                    const emailInput = this.querySelector('input[type="email"]');
+                    const messageTextarea = this.querySelector('textarea');
+
+                    if (nameInput.value.trim() === '' || emailInput.value.trim() === '' || messageTextarea.value.trim() === '') {
+                        alert('Пожалуйста, заполните все поля формы!');
+                    } else if (!emailInput.value.includes('@')) {
+                        alert('Пожалуйста, введите корректный адрес электронной почты!');
+                    } else {
+                        alert('Сообщение отправлено! (На самом деле, это просто демонстрация)');
+                        // Здесь вы обычно отправляли бы данные на сервер
+                        this.reset(); // Очистить форму
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
