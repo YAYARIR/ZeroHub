@@ -3,47 +3,383 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вжух! Магазин Смешных Видеокарт и Всякой Всячины</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="icon" href="assets/img/favicon.png" type="image/png"> </head>
+    <title>Вжух! Твой Магазин Смешных Видеокарт и Всякой Всячины</title>
+    <link rel="icon" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR0u4r30qgX2m-WqS5q7n4k5_3J1K3yP1N5A&s" type="image/png"> <style>
+        /* assets/css/style.css - Все стили тут */
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap');
+
+        :root {
+            --primary-color: #ff4d4d; /* Ярко-красный */
+            --secondary-color: #4d4dff; /* Ярко-синий */
+            --background-dark: #1a1a2e; /* Темно-синий фон */
+            --background-light: #202030; /* Чуть светлее */
+            --text-color: #e0e0e0; /* Светлый текст */
+            --card-background: #2a2a40; /* Фон карточек */
+            --border-color: #6a6a8a; /* Цвет границ */
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden; /* Чтобы не было горизонтального скролла */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--background-light);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 3px solid var(--primary-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            font-family: 'Press Start 2P', cursive;
+            color: var(--primary-color);
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 3px 3px 0 var(--secondary-color);
+            animation: glitch 1s infinite alternate; /* Добавим небольшой эффект глитча */
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        header .tagline {
+            font-size: 1.1em;
+            color: var(--text-color);
+            margin-top: 10px;
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+            background: linear-gradient(45deg, var(--background-dark), var(--background-light));
+            border-bottom: 2px dashed var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background-color: var(--primary-color);
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+            opacity: 0.1;
+            transform: rotate(45deg);
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+            background-color: var(--secondary-color);
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
+            opacity: 0.1;
+            transform: rotate(45deg);
+        }
+
+        .hero-image {
+            max-width: 300px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(var(--primary-color), 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.05) rotate(5deg);
+        }
+
+        .hero h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.8em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.1em;
+            max-width: 800px;
+            margin: 0 auto 30px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: var(--background-dark);
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-family: 'Press Start 2P', cursive; /* Для кнопок тоже */
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .product-section {
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .product-section h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2em;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 0 var(--secondary-color);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            justify-content: center;
+            align-items: stretch;
+        }
+
+        .product-card {
+            background-color: var(--card-background);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: left;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px) rotate(2deg);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+            border-color: var(--primary-color);
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(var(--primary-color), 0.05), rgba(var(--secondary-color), 0.05));
+            z-index: 0;
+        }
+
+        .product-card-img {
+            max-width: 100%;
+            height: 200px; /* Фиксированная высота для изображений */
+            object-fit: contain; /* Чтобы изображения целиком вписывались */
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(var(--border-color), 0.5);
+            display: block; /* Убираем лишние отступы */
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.3em;
+            color: var(--secondary-color);
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card .category {
+            font-size: 0.9em;
+            color: var(--border-color);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card .description {
+            font-size: 0.95em;
+            margin-bottom: 15px;
+            flex-grow: 1; /* Чтобы описание занимало всё доступное место */
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card .humor {
+            font-style: italic;
+            color: var(--primary-color);
+            font-size: 0.85em;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card .price {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: right;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card .price span {
+            font-size: 0.8em;
+            vertical-align: super;
+        }
+
+        .product-card .btn-add-to-cart {
+            width: 100%;
+            text-align: center;
+            font-size: 0.9em;
+            padding: 10px 15px;
+            box-sizing: border-box; /* Чтобы padding не увеличивал ширину */
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-card .not-available {
+            background-color: #6b6b6b;
+            cursor: not-allowed;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+
+        .product-card .not-available:hover {
+            background-color: #6b6b6b;
+            transform: none;
+            box-shadow: none;
+        }
+
+        footer {
+            background-color: var(--background-light);
+            padding: 20px 0;
+            text-align: center;
+            border-top: 3px solid var(--secondary-color);
+            margin-top: 40px;
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9em;
+            color: var(--border-color);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            .hero h2 {
+                font-size: 1.4em;
+            }
+            .product-section h2 {
+                font-size: 1.6em;
+            }
+            .product-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.5em;
+            }
+            header .tagline {
+                font-size: 0.9em;
+            }
+            .hero h2 {
+                font-size: 1.2em;
+            }
+            .hero p {
+                font-size: 1em;
+            }
+            .product-grid {
+                grid-template-columns: 1fr; /* Одна колонка на очень маленьких экранах */
+            }
+            .product-card {
+                padding: 15px;
+            }
+            .product-card h3 {
+                font-size: 1.1em;
+            }
+            .product-card .price {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
 <body>
     <header>
         <div class="container">
             <h1>Вжух!</h1>
             <p class="tagline">Твой FPS будет визжать от восторга (или от ужаса цены)!</p>
-            <nav>
-                <ul>
-                    <li><a href="shop.html">Заценить Видеокарты!</a></li>
-                    <li><a href="about.html">Кто мы такие?</a></li>
-                    <li><a href="contact.html">Поплакаться в жилетку</a></li>
-                    <li><a href="cart.html">Корзина (слёз и надежд)</a></li>
-                </ul>
-            </nav>
         </div>
     </header>
 
     <main>
         <section class="hero">
             <div class="container">
-                <img src="assets/img/hero_gpu.png" alt="Смешная видеокарта на героическом фоне" class="hero-image"> <h2>Готов к апгрейду своего настроения?</h2>
+                <img src="https://via.placeholder.com/300x200/4d4dff/ffffff?text=Ваш+мемный+герой" alt="Смешная видеокарта на героическом фоне" class="hero-image">
+                <h2>Готов к апгрейду своего настроения?</h2>
                 <p>У нас есть не только видеокарты, которые заставят твои игры летать, но и целый ворох бесполезных (и очень нужных!) штук, чтобы твоя геймерская душа радовалась.</p>
-                <a href="shop.html" class="btn-main">Погрузиться в пучину абсурда!</a>
+                <button class="btn" onclick="scrollToProducts()">Погрузиться в пучину абсурда!</button>
             </div>
         </section>
 
-        <section class="featured-products">
+        <section class="product-section" id="products-section">
             <div class="container">
                 <h2>Наши хиты (или то, что не успели разобрать)</h2>
-                <div class="product-grid" id="featured-products-container">
+                <div class="product-grid" id="product-grid-container">
                     </div>
-            </div>
-        </section>
-
-        <section class="cta">
-            <div class="container">
-                <h2>Не знаешь, что выбрать?</h2>
-                <p>Наша нейросеть-юморист подберёт тебе идеальную видеокарту и пару приколюх! (Шутка, конечно. Пока что.)</p>
-                <a href="contact.html" class="btn-secondary">Спросить у гуру</a>
             </div>
         </section>
     </main>
@@ -54,7 +390,129 @@
         </div>
     </footer>
 
-    <script src="assets/js/products.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script>
+        // assets/js/products.js + assets/js/main.js - Все скрипты тут
+        const products = [
+            {
+                id: 'gpu-rtx4090-legend',
+                name: 'RTX 4090 "Легенда, которая шепчет"',
+                category: 'Видеокарты',
+                price: 199999,
+                image: 'https://via.placeholder.com/300x200/ff4d4d/ffffff?text=RTX+4090', // Временная заглушка
+                description: 'Эта видеокарта не просто тянет игры на ультрах, она их **запускает в соседней галактике на скорости света**. Ваш монитор будет плакать от счастья, а кошелек — от ностальгии. Идеально для тех, кто хочет услышать, как соседи завидуют турбинам вашего ПК.',
+                humor: 'В комплекте идёт персональный спасатель для блока питания.',
+                available: true
+            },
+            {
+                id: 'gpu-gtx1060-veteran',
+                name: 'GTX 1060 "Старый, но не бесполезный"',
+                category: 'Видеокарты',
+                price: 15000,
+                image: 'https://via.placeholder.com/300x200/4d4dff/ffffff?text=GTX+1060', // Временная заглушка
+                description: 'Помните времена, когда 1060 была королевой? Она всё ещё может подарить вам **ностальгические 60 FPS** в большинстве игр 2018 года. Отлично подходит для тех, кто любит ретро или просто не накопил на "Легенду". Не греет, а **обогревает комнату зимой**.',
+                humor: 'Может быть, даже запустит Cyberpunk 2077 на минималках... с очень большой верой и парой патчей.',
+                available: true
+            },
+            {
+                id: 'accessory-mousepad-meme',
+                name: 'Коврик для мыши "Мемный Вдохновитель"',
+                category: 'Аксессуары',
+                price: 999,
+                image: 'https://via.placeholder.com/300x200/ffcc00/000000?text=Мемный+Коврик', // Временная заглушка
+                description: 'Устали от скучных ковриков? Этот коврик с **рандомными, но актуальными мемами** будет поднимать ваше настроение каждый раз, когда вы проигрываете в сетевой игре. Гарантированно отвлекает противников, если они заглянут к вам на экран.',
+                humor: 'Одобрено советом древних жаб и котов.',
+                available: true
+            },
+            {
+                id: 'misc-air-bottle',
+                name: 'Элитный воздух для ПК "Дыхание Оверклокера"',
+                category: 'Всякая Всячина',
+                price: 2500,
+                image: 'https://via.placeholder.com/300x200/00bcd4/ffffff?text=Воздух+Оверклокера', // Временная заглушка
+                description: 'Зачем чистить ПК сжатым воздухом, когда можно использовать **воздух, настоянный на кристаллах кремния** из лучших серверов Силиконовой Долины? Повышает производительность на 0.001% и поднимает ЧСВ на 100%. В комплекте сертификат "Вдыхателя Мощности".',
+                humor: 'Осторожно: может вызвать необратимую тягу к покупке самых дорогих комплектующих.',
+                available: false
+            },
+            {
+                id: 'accessory-headstand-alien',
+                name: 'Подставка для наушников "Пришелец-Слухач"',
+                category: 'Аксессуары',
+                price: 1800,
+                image: 'https://via.placeholder.com/300x200/9c27b0/ffffff?text=Пришелец+Наклон', // Временная заглушка
+                description: 'Ваши наушники заслуживают королевского трона! Эта подставка в виде милого (или не очень) пришельца **бережно хранит вашу гарнитуру**, пока вы перекусываете. Плюс, она выглядит так, будто ждёт ваших секретов.',
+                humor: 'Слухи говорят, что пришелец записывает ваши игровые фразы для межгалактического стендапа.',
+                available: true
+            },
+             {
+                id: 'misc-magic-keyboard-cleaner',
+                name: 'Магическая жвачка для клавиатуры "Сожри Крошки"',
+                category: 'Всякая Всячина',
+                price: 450,
+                image: 'https://via.placeholder.com/300x200/607d8b/ffffff?text=Клавиатурная+Жвачка', // Временная заглушка
+                description: 'Надоели крошки под кнопками? Эта эластичная субстанция **поглощает всю грязь, пыль и мелкие частицы зла** из вашей клавиатуры! Просто прижмите и потяните. Внимание: не пытайтесь жевать, хотя и очень похоже на жвачку.',
+                humor: 'На вкус как победа... или как старый чипс, смотря что вы ели над клавиатурой.',
+                available: true
+            },
+            {
+                id: 'accessory-fan-usb-meme',
+                name: 'USB-Вентилятор "Лицо Перегрева"',
+                category: 'Аксессуары',
+                price: 700,
+                image: 'https://via.placeholder.com/300x200/795548/ffffff?text=Вентилятор+Мем', // Временная заглушка
+                description: 'Маленький, но гордый вентилятор, который **будет изображать мучения вашего ПК** каждый раз, когда вы запускаете новую игру. Его мемное выражение лица напомнит вам о том, как тяжело жить вашей видеокарте. Подключается по USB, дует слабо, но смешно.',
+                humor: 'Одобрено ассоциацией "Защитники страдающих видеокарт".',
+                available: true
+            }
+        ];
+
+        function renderProducts() {
+            const productGridContainer = document.getElementById('product-grid-container');
+            if (!productGridContainer) return; // Проверка на существование элемента
+
+            productGridContainer.innerHTML = ''; // Очищаем контейнер перед добавлением
+
+            products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('product-card');
+
+                const availabilityClass = product.available ? '' : ' not-available';
+                const buttonText = product.available ? 'Добавить в корзину (нет)' : 'Нет в наличии (к счастью)';
+                const buttonDisabled = product.available ? '' : 'disabled';
+
+                // Используем data-id для хранения ID товара, если потом понадобится корзина
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="product-card-img">
+                    <h3>${product.name}</h3>
+                    <p class="category">${product.category}</p>
+                    <p class="description">${product.description}</p>
+                    <p class="humor">${product.humor}</p>
+                    <p class="price">${product.price} ₽<span>руб.</span></p>
+                    <button class="btn btn-add-to-cart${availabilityClass}" ${buttonDisabled} data-id="${product.id}">
+                        ${buttonText}
+                    </button>
+                `;
+                productGridContainer.appendChild(productCard);
+            });
+
+            // Добавляем обработчики событий для кнопок "Добавить в корзину (нет)"
+            // Это заглушка, т.к. корзины нет, но показывает, как можно было бы сделать
+            document.querySelectorAll('.btn-add-to-cart').forEach(button => {
+                if (!button.disabled) {
+                    button.addEventListener('click', (event) => {
+                        const productId = event.target.dataset.id;
+                        alert(`Вы пытались добавить "${products.find(p => p.id === productId).name}" в корзину. Но корзины пока нет! Продолжайте наслаждаться юмором.`);
+                    });
+                }
+            });
+        }
+
+        // Функция для плавной прокрутки к разделу товаров
+        function scrollToProducts() {
+            document.getElementById('products-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Запускаем рендеринг товаров при загрузке страницы
+        document.addEventListener('DOMContentLoaded', renderProducts);
+    </script>
 </body>
 </html>
