@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Хостинг</title>
+    <title>Мой Хостинг - Бесплатный План</title>
     <style>
         /* Общие стили */
         body {
@@ -144,77 +144,60 @@
             margin-bottom: 10px;
         }
 
-        /* Секция Цены */
+        /* Секция Цены (Теперь для одного тарифа) */
         .pricing-section {
             background-color: #fff;
         }
 
-        .pricing-grid {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-
-        .price-card {
+        .pricing-card-single {
             background-color: #f8f9fa;
-            padding: 30px;
+            padding: 40px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            flex: 1;
-            min-width: 280px;
-            max-width: 350px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            max-width: 450px; /* Увеличиваем ширину для лучшего вида одного тарифа */
+            margin: 0 auto; /* Центрируем карточку */
             text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid #28a745; /* Зеленая рамка для бесплатного тарифа */
         }
 
-        .price-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .price-card.recommended {
-            border: 2px solid #007bff;
-            background-color: #eaf3ff;
-        }
-
-        .price-card h3 {
-            color: #007bff;
-            font-size: 1.8rem;
+        .pricing-card-single h3 {
+            color: #28a745; /* Зеленый цвет для заголовка */
+            font-size: 2.2rem;
             margin-bottom: 15px;
         }
 
-        .price-card .price {
-            font-size: 2.5rem;
+        .pricing-card-single .price {
+            font-size: 3rem;
             font-weight: bold;
             color: #333;
             margin-bottom: 20px;
         }
 
-        .price-card ul {
+        .pricing-card-single ul {
             list-style: none;
             padding: 0;
             margin-bottom: 30px;
         }
 
-        .price-card ul li {
+        .pricing-card-single ul li {
             margin-bottom: 10px;
             color: #555;
+            font-size: 1.1rem;
         }
 
-        .price-card button {
-            background-color: #007bff;
+        .pricing-card-single button {
+            background-color: #28a745; /* Зеленая кнопка */
             color: #fff;
-            padding: 12px 25px;
+            padding: 15px 30px;
             border: none;
             border-radius: 5px;
-            font-size: 1rem;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
-        .price-card button:hover {
-            background-color: #0056b3;
+        .pricing-card-single button:hover {
+            background-color: #218838;
         }
 
         /* Секция Контакты */
@@ -287,14 +270,12 @@
                 font-size: 2.5rem;
             }
 
-            .feature-grid,
-            .pricing-grid {
+            .feature-grid {
                 flex-direction: column;
                 align-items: center;
             }
 
-            .feature-item,
-            .price-card {
+            .feature-item {
                 width: 90%;
                 max-width: 400px;
             }
@@ -308,6 +289,15 @@
             .hero-section p {
                 font-size: 1rem;
             }
+            .pricing-card-single {
+                padding: 30px;
+            }
+            .pricing-card-single h3 {
+                font-size: 1.8rem;
+            }
+            .pricing-card-single .price {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
@@ -317,7 +307,7 @@
             <div class="logo">Мой Хостинг</div>
             <ul>
                 <li><a href="#features">Особенности</a></li>
-                <li><a href="#pricing">Цены</a></li>
+                <li><a href="#pricing">Тариф</a></li>
                 <li><a href="#contact">Контакты</a></li>
             </ul>
         </nav>
@@ -325,68 +315,48 @@
 
     <main>
         <section id="hero" class="hero-section">
-            <h1>Быстрый и Надежный Хостинг для Ваших Проектов</h1>
-            <p>Запустите свой сайт сегодня с нашими высокопроизводительными серверами и круглосуточной поддержкой.</p>
-            <button id="learnMoreBtn">Узнать больше</button>
+            <h1>Бесплатный Хостинг на GitHub Pages для Ваших Проектов</h1>
+            <p>Запустите свой статический сайт сегодня с нашим бесплатным планом! Идеально подходит для личных проектов, портфолио и лендингов.</p>
+            <button id="learnMoreBtn">Начать бесплатно</button>
         </section>
 
         <section id="features" class="features-section">
             <h2>Почему Выбирают Нас?</h2>
             <div class="feature-grid">
                 <div class="feature-item">
-                    <h3>Высокая Скорость</h3>
-                    <p>Оптимизированные сервера для максимальной производительности вашего сайта.</p>
+                    <h3>Бесплатно Всегда</h3>
+                    <p>Никаких скрытых платежей. Ваш сайт будет работать бесплатно.</p>
                 </div>
                 <div class="feature-item">
-                    <h3>24/7 Поддержка</h3>
-                    <p>Наша команда всегда готова помочь вам с любыми вопросами.</p>
+                    <h3>Работает на GitHub Pages</h3>
+                    <p>Надежная инфраструктура GitHub для быстрого и глобального доступа.</p>
                 </div>
                 <div class="feature-item">
-                    <h3>Безопасность</h3>
-                    <p>Современные решения для защиты ваших данных.</p>
+                    <h3>Неограниченный Трафик</h3>
+                    <p>Ваш сайт будет доступен без ограничений по объему передаваемых данных.</p>
                 </div>
             </div>
         </section>
 
         <section id="pricing" class="pricing-section">
-            <h2>Наши Тарифы</h2>
-            <div class="pricing-grid">
-                <div class="price-card">
-                    <h3>Базовый</h3>
-                    <p class="price">$5.99/мес</p>
-                    <ul>
-                        <li>1 Домен</li>
-                        <li>5 ГБ Диска</li>
-                        <li>100 ГБ Трафика</li>
-                    </ul>
-                    <button>Выбрать</button>
-                </div>
-                <div class="price-card recommended">
-                    <h3>Стандартный</h3>
-                    <p class="price">$9.99/мес</p>
-                    <ul>
-                        <li>5 Доменов</li>
-                        <li>20 ГБ Диска</li>
-                        <li>Неограниченный Трафик</li>
-                    </ul>
-                    <button>Выбрать</button>
-                </div>
-                <div class="price-card">
-                    <h3>Премиум</h3>
-                    <p class="price">$19.99/мес</p>
-                    <ul>
-                        <li>Неограниченно Доменов</li>
-                        <li>50 ГБ Диска</li>
-                        <li>Неограниченный Трафик</li>
-                    </ul>
-                    <button>Выбрать</button>
-                </div>
+            <h2>Наш Бесплатный Тариф</h2>
+            <div class="pricing-card-single">
+                <h3>Free</h3>
+                <p class="price">$0/мес</p>
+                <ul>
+                    <li>**25 МБ** Дискового Пространства</li>
+                    <li>**Неограниченный** Трафик</li>
+                    <li>Работает на GitHub Pages</li>
+                    <li>SSL Сертификат (HTTPS)</li>
+                    <li>Простая развертка с помощью Git</li>
+                </ul>
+                <button>Начать Хостинг</button>
             </div>
         </section>
 
         <section id="contact" class="contact-section">
             <h2>Свяжитесь с Нами</h2>
-            <p>Есть вопросы? Напишите нам, и мы ответим как можно скорее!</p>
+            <p>Есть вопросы по бесплатному хостингу? Напишите нам!</p>
             <form>
                 <input type="text" placeholder="Ваше Имя">
                 <input type="email" placeholder="Ваш Email">
@@ -397,7 +367,7 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 Мой Хостинг. Все права защищены.</p>
+        <p>&copy; 2025 Мой Хостинг. Все права защищены. Работает на GitHub Pages.</p>
     </footer>
 
     <script>
@@ -419,14 +389,14 @@
                 });
             });
 
-            // Пример интерактивности: Кнопка "Узнать больше" в секции Hero
+            // Пример интерактивности: Кнопка "Начать бесплатно" в секции Hero
             const learnMoreBtn = document.getElementById('learnMoreBtn');
             if (learnMoreBtn) {
                 learnMoreBtn.addEventListener('click', () => {
-                    const featuresSection = document.getElementById('features');
-                    if (featuresSection) {
+                    const pricingSection = document.getElementById('pricing'); // Перенаправляем на секцию с тарифом
+                    if (pricingSection) {
                         window.scrollTo({
-                            top: featuresSection.offsetTop - document.querySelector('header').offsetHeight,
+                            top: pricingSection.offsetTop - document.querySelector('header').offsetHeight,
                             behavior: 'smooth'
                         });
                     }
@@ -449,7 +419,7 @@
                         alert('Пожалуйста, введите корректный адрес электронной почты!');
                     } else {
                         alert('Сообщение отправлено! (На самом деле, это просто демонстрация)');
-                        // Здесь вы обычно отправляли бы данные на сервер
+                        // Здесь вы обычно отправляли бы данные на сервер или использовали GitHub API для создания issue/PR
                         this.reset(); // Очистить форму
                     }
                 });
