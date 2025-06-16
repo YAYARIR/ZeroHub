@@ -3,4 +3,4 @@
   functions = "netlify/functions"
 
 [functions]
-  python_version = "3.9" # Можете изменить на 3.10 или другую поддерживаемую Netlify версию Python, если нужно
+  python_version = "3.9"
