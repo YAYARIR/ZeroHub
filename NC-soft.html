@@ -4,6 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Конвертер .newtrobat в .apk</title>
+    <style>
+        /* Общие стили для body */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box; /* Учитываем padding в общей ширине/высоте */
+        }
+
+        /* Стили для заголовков */
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Стили для параграфов */
+        p {
+            text-align: center;
+            line-height: 1.6;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        /* Стили для формы */
+        form {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        /* Стили для поля выбора файла */
+        input[type="file"] {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+            width: calc(100% - 22px); /* Учитываем padding и border */
+            background-color: #f9f9f9;
+        }
+
+        /* Стили для кнопки */
+        button[type="submit"] {
+            background-color: #4CAF50; /* Зеленый */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049; /* Темно-зеленый при наведении */
+        }
+
+        /* Стили для сообщений о статусе/ошибке */
+        #statusMessage {
+            margin-top: 20px;
+            color: #28a745; /* Зеленый для успеха */
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #errorMessage {
+            margin-top: 20px;
+            color: #dc3545; /* Красный для ошибки */
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Стили для ссылки на шаблон APK */
+        a {
+            color: #007bff; /* Синий */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #0056b3; /* Темно-синий при наведении */
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 
@@ -15,8 +112,8 @@
         <button type="submit">Конвертировать в APK</button>
     </form>
 
-    <div id="statusMessage" style="margin-top: 20px; color: green;"></div>
-    <div id="errorMessage" style="margin-top: 20px; color: red;"></div>
+    <div id="statusMessage"></div>
+    <div id="errorMessage"></div>
 
     <script>
         document.getElementById('uploadForm').addEventListener('submit', async function(event) {
@@ -50,7 +147,9 @@
                 if (response.ok) {
                     // Если всё хорошо, предлагаем пользователю скачать файл
                     const blob = await response.blob();
-                    const fileName = file.name.replace('.newtrobat', '.apk');
+                    // Используем оригинальное имя файла (без расширения) + .apk
+                    const originalFileName = file.name.split('.').slice(0, -1).join('.'); 
+                    const fileName = `${originalFileName}.apk`;
                     
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
