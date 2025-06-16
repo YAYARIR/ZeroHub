@@ -270,6 +270,14 @@
         .payment-content .btn {
             margin: 10px;
             width: 180px; /* Фиксированная ширина для кнопок */
+            /* Добавим стили для падения */
+            transition: transform 0.5s ease-in, opacity 0.5s ease-in;
+        }
+
+        /* Анимация падения для кнопок */
+        .btn.falling {
+            transform: translateY(2000px) rotate(30deg); /* Падают вниз и немного поворачиваются */
+            opacity: 0;
         }
 
 
@@ -600,7 +608,6 @@
         <div class="payment-content">
             <h3>Куда отправить твои "богатства"?</h3>
             <button class="btn" id="pay-funpay">Оплатить через FunPay (за 1 рубль)</button>
-            <button class="btn" id="pay-service-x">Оплатить через "Супер-Сервис Х" (за 1 рубль)</button>
             <button class="btn" id="close-payment-modal">Я передумал(а)!</button>
         </div>
     </div>
@@ -631,9 +638,7 @@
     </footer>
 
     <script>
-        // assets/js/products.js + assets/js/main.js - Все скрипты тут
-
-        // 1. Данные о товарах
+        // Данные о товарах (products array remains the same as before)
         const products = [
             {
                 id: 'gpu-rtx4090-legend',
@@ -707,8 +712,8 @@
             }
         ];
 
-        // 2. Глобальные переменные и ссылки на DOM-элементы
-        let cartItems = []; // Массив для хранения товаров в "корзине"
+        // Глобальные переменные и ссылки на DOM-элементы
+        let cartItems = [];
 
         const cartCountElement = document.getElementById('cart-count');
         const cartIconElement = document.getElementById('cart-icon');
@@ -718,10 +723,9 @@
         const btnCheckoutElement = document.getElementById('btn-checkout');
         const paymentModalElement = document.getElementById('payment-modal');
         const payFunpayBtn = document.getElementById('pay-funpay');
-        const payServiceXBtn = document.getElementById('pay-service-x');
         const closePaymentModalBtn = document.getElementById('close-payment-modal');
 
-        // 3. Функции
+        // Функции
         function renderProducts() {
             const productGridContainer = document.getElementById('product-grid-container');
             if (!productGridContainer) return;
@@ -750,7 +754,6 @@
                 productGridContainer.appendChild(productCard);
             });
 
-            // Добавляем обработчики для кнопок "Добавить в корзину"
             document.querySelectorAll('.btn-add-to-cart').forEach(button => {
                 if (!button.disabled) {
                     button.addEventListener('click', (event) => {
@@ -766,23 +769,24 @@
             if (productToAdd) {
                 cartItems.push(productToAdd);
                 updateCartUI();
+                // Можно добавить более "весёлый" alert или другой эффект
                 alert(`"${productToAdd.name}" добавлен в твою невероятную коллекцию!`);
             }
         }
 
         function removeFromCart(index) {
-            cartItems.splice(index, 1); // Удаляем элемент по индексу
+            cartItems.splice(index, 1);
             updateCartUI();
         }
 
         function updateCartUI() {
             cartCountElement.textContent = cartItems.length;
-            cartPanelItemsElement.innerHTML = ''; // Очищаем список
+            cartPanelItemsElement.innerHTML = '';
 
             if (cartItems.length === 0) {
                 cartPanelItemsElement.innerHTML = '<p style="text-align: center; color: var(--border-color);">Пока пусто... пора тратить денюжки!</p>';
                 cartTotalElement.textContent = 'Итого: 0 ₽';
-                btnCheckoutElement.disabled = true; // Отключаем кнопку оплаты, если корзина пуста
+                btnCheckoutElement.disabled = true;
             } else {
                 let total = 0;
                 cartItems.forEach((item, index) => {
@@ -796,11 +800,10 @@
                     cartPanelItemsElement.appendChild(cartItemDiv);
                     total += item.price;
                 });
-                cartTotalElement.textContent = `Итого: ${total} ₽ (шутка!)`; // Добавим юмора
-                btnCheckoutElement.disabled = false; // Включаем кнопку оплаты
+                cartTotalElement.textContent = `Итого: ${total} ₽ (шутка!)`;
+                btnCheckoutElement.disabled = false;
             }
 
-            // Добавляем обработчики для кнопок удаления
             document.querySelectorAll('.remove-item').forEach(button => {
                 button.addEventListener('click', (event) => {
                     const indexToRemove = parseInt(event.target.dataset.index);
@@ -820,13 +823,26 @@
 
         function closePaymentModal() {
             paymentModalElement.classList.remove('open');
+            // Убедимся, что кнопки не остались в состоянии "falling"
+            document.querySelectorAll('#payment-modal .btn').forEach(btn => {
+                btn.classList.remove('falling');
+            });
         }
 
-        function handlePayment(method) {
-            alert(`Выбрана оплата через ${method}! Перенаправляем на "секретный" сайт оплаты в 1 рубль...`);
-            // Замени ссылку на свою реальную, где можно оплатить 1 рубль
-            window.location.href = 'https://qiwi.com/p/653202511487'; // Пример ссылки на QIWI Pay в 1 рубль
-            // Или: 'https://pay.example.com/pay?amount=1&currency=RUB'
+        function handleFunpayPayment() {
+            const paymentButtons = document.querySelectorAll('#payment-modal .btn');
+            
+            // Заставляем кнопки "падать"
+            paymentButtons.forEach((btn, index) => {
+                setTimeout(() => {
+                    btn.classList.add('falling');
+                }, index * 100); // Небольшая задержка для каскадного эффекта
+            });
+
+            // Перенаправляем после завершения анимации
+            setTimeout(() => {
+                window.location.href = 'https://funpay.com/lots/offer?id=43547880';
+            }, 600); // Длительность анимации + небольшая задержка
         }
 
         function scrollToProducts() {
@@ -834,11 +850,10 @@
         }
 
 
-        // 4. Обработчики событий
+        // Обработчики событий
         cartIconElement.addEventListener('click', toggleCartPanel);
         btnCheckoutElement.addEventListener('click', openPaymentModal);
-        payFunpayBtn.addEventListener('click', () => handlePayment('FunPay'));
-        payServiceXBtn.addEventListener('click', () => handlePayment('Супер-Сервис Х'));
+        payFunpayBtn.addEventListener('click', handleFunpayPayment); // Наша новая функция
         closePaymentModalBtn.addEventListener('click', closePaymentModal);
 
         // Закрытие панели корзины/модального окна при клике вне их
@@ -846,6 +861,7 @@
             if (cartPanelElement.classList.contains('open') && !cartPanelElement.contains(event.target) && !cartIconElement.contains(event.target)) {
                 cartPanelElement.classList.remove('open');
             }
+            // Проверяем, что не кликнули по кнопке, которая должна открывать модалку
             if (paymentModalElement.classList.contains('open') && !paymentModalElement.firstElementChild.contains(event.target) && event.target !== btnCheckoutElement) {
                 closePaymentModal();
             }
