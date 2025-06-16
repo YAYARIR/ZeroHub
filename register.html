@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Мой Хостинг</title>
+    <style>
+        /* Общие стили для страницы регистрации */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f8f9fa;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+        }
+
+        header .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .registration-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .registration-container h2 {
+            color: #007bff;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .registration-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .registration-form input[type="text"],
+        .registration-form input[type="email"],
+        .registration-form input[type="password"] {
+            width: calc(100% - 24px); /* Учитываем padding */
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .registration-form button {
+            background-color: #28a745;
+            color: #fff;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .registration-form button:hover {
+            background-color: #218838;
+        }
+
+        #registrationSuccess {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            display: none; /* Скрыто по умолчанию */
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        /* Медиа-запросы */
+        @media (max-width: 600px) {
+            .registration-container {
+                padding: 25px;
+            }
+            .registration-container h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Мой Хостинг</div>
+    </header>
+
+    <main>
+        <div class="registration-container">
+            <h2>Регистрация Бесплатного Хостинга</h2>
+            <form class="registration-form" name="registration" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
+                <input type="hidden" name="form-name" value="registration" />
+                <p style="display: none;">
+                    <label>Не заполнять: <input name="bot-field" /></label>
+                </p>
+                <input type="text" name="username" placeholder="Имя пользователя" required>
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Пароль" required>
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+            <div id="registrationSuccess">
+                <p>Вы успешно зарегистрированы! Мы свяжемся с вами в ближайшее время.</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Мой Хостинг. Все права защищены. Хостинг на Netlify.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const registrationForm = document.querySelector('.registration-form'); // Используем querySelector для формы
+            const successMessage = document.getElementById('registrationSuccess');
+
+            registrationForm.addEventListener('submit', function(e) {
+                // Netlify Forms автоматически обрабатывает отправку, нам не нужно preventDefault,
+                // если мы хотим, чтобы Netlify обработал форму.
+                // Однако, для нашей кастомной валидации и отображения сообщения об успехе
+                // мы все равно можем перехватить событие.
+                e.preventDefault();
+
+                const usernameInput = this.querySelector('input[name="username"]');
+                const emailInput = this.querySelector('input[name="email"]');
+                const passwordInput = this.querySelector('input[name="password"]');
+
+                if (usernameInput.value.trim() === '' || emailInput.value.trim() === '' || passwordInput.value.trim() === '') {
+                    alert('Пожалуйста, заполните все поля!');
+                    return;
+                }
+
+                if (!emailInput.value.includes('@') || !emailInput.value.includes('.')) {
+                    alert('Пожалуйста, введите корректный адрес электронной почты!');
+                    return;
+                }
+
+                // Если все проверки прошли, отправляем форму Netlify
+                const formData = new FormData(registrationForm);
+                fetch("/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(formData).toString(),
+                })
+                .then(() => {
+                    registrationForm.reset();
+                    registrationForm.style.display = 'none'; // Скрываем форму
+                    successMessage.style.display = 'block'; // Показываем сообщение об успехе
+                    // Возможно, перенаправление или другое действие
+                    // setTimeout(() => { window.location.href = 'index.html'; }, 3000); // Пример: вернуться на главную через 3 секунды
+                })
+                .catch((error) => alert(error));
+            });
+        });
+    </script>
+</body>
+</html>
