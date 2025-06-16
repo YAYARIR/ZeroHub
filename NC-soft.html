@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Конвертер .newtrobat в .apk</title>
+</head>
+<body>
+
+    <h1>Конвертер проектов в APK</h1>
+    <p>Загрузите ваш файл .newtrobat, и мы сконвертируем его в .apk приложение.</p>
+    
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="newtrobatFile" name="newtrobatFile" accept=".newtrobat" required>
+        <button type="submit">Конвертировать в APK</button>
+    </form>
+
+    <div id="statusMessage" style="margin-top: 20px; color: green;"></div>
+    <div id="errorMessage" style="margin-top: 20px; color: red;"></div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Предотвращаем стандартную отправку формы
+
+            const fileInput = document.getElementById('newtrobatFile');
+            const statusMessage = document.getElementById('statusMessage');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            statusMessage.textContent = 'Конвертация файла... Пожалуйста, подождите.';
+            errorMessage.textContent = ''; // Очищаем предыдущие ошибки
+
+            if (fileInput.files.length === 0) {
+                errorMessage.textContent = 'Пожалуйста, выберите файл .newtrobat для загрузки.';
+                statusMessage.textContent = '';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const formData = new FormData();
+            formData.append('newtrobatFile', file);
+
+            try {
+                // Отправляем файл на нашу Netlify Function
+                // Путь к функции будет / .netlify/functions/convert_apk
+                const response = await fetch('/.netlify/functions/convert_apk', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // Если всё хорошо, предлагаем пользователю скачать файл
+                    const blob = await response.blob();
+                    const fileName = file.name.replace('.newtrobat', '.apk');
+                    
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = fileName; // Имя файла для скачивания
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url); // Освобождаем URL
+
+                    statusMessage.textContent = `Ваш файл "${fileName}" готов! Скачивание началось.`;
+                } else {
+                    const errorText = await response.text();
+                    errorMessage.textContent = `Ошибка конвертации: ${response.status} - ${errorText}`;
+                    statusMessage.textContent = '';
+                }
+            } catch (error) {
+                errorMessage.textContent = `Произошла ошибка сети: ${error.message}`;
+                statusMessage.textContent = '';
+            }
+        });
+    </script>
+
+    <p style="margin-top: 30px;">
+        Также вы можете <a href="template.apk" download>скачать базовый шаблон APK</a>.
+    </p>
+
+</body>
+</html>
