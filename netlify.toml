@@ -3,4 +3,5 @@
   functions = "netlify/functions"
 
 [functions]
-  python = "3.9"
+  [functions.python]
+    version = "3.9
