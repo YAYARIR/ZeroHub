@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  functions = "netlify/functions/convert-apk.py"
+  functions = "netlify/functions"
 
 [functions]
   python_version = "3.9"
