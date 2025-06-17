@@ -100,13 +100,44 @@
             color: #0056b3; /* Темно-синий при наведении */
             text-decoration: underline;
         }
+
+        /* Стили для отладочной консоли */
+        .log-console {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 300px;
+            height: 180px; /* Увеличил высоту для лучшей видимости */
+            background-color: rgba(0, 0, 0, 0.85); /* Сделал немного темнее */
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            padding: 8px; /* Немного больше отступов */
+            overflow-y: scroll;
+            border: 1px solid #00ff00;
+            z-index: 9999;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3); /* Добавил свечение */
+            border-radius: 5px; /* Скруглил углы */
+        }
+
+        .log-console p {
+            margin: 0;
+            padding-bottom: 5px;
+            font-weight: bold;
+            color: #39ff14; /* Ярче цвет заголовка */
+        }
+
+        .log-console #debug-log {
+            white-space: pre-wrap; /* Сохраняет переносы строк */
+            word-wrap: break-word; /* Переносит длинные слова */
+        }
     </style>
 </head>
 <body>
 
     <h1>Конвертер проектов в APK</h1>
     <p>Загрузите ваш файл .newtrobat, и мы сконвертируем его в .apk приложение.</p>
-    
+
     <form id="uploadForm" enctype="multipart/form-data">
         <input type="file" id="newtrobatFile" name="newtrobatFile" accept=".newtrobat" required>
         <button type="submit">Конвертировать в APK</button>
@@ -115,60 +146,120 @@
     <div id="statusMessage"></div>
     <div id="errorMessage"></div>
 
+    <div class="log-console">
+        <p>Логи отладки:</p>
+        <div id="debug-log"></div>
+    </div>
+
     <script>
+        // Функция для вывода логов в консоль на сайте
+        function logToConsole(message) {
+            const logElement = document.getElementById('debug-log');
+            if (logElement) {
+                const timestamp = new Date().toLocaleTimeString();
+                logElement.innerHTML += `[${timestamp}] ${message}\n`;
+                logElement.scrollTop = logElement.scrollHeight; // Прокрутить вниз
+            }
+        }
+
         document.getElementById('uploadForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Предотвращаем стандартную отправку формы
 
             const fileInput = document.getElementById('newtrobatFile');
             const statusMessage = document.getElementById('statusMessage');
             const errorMessage = document.getElementById('errorMessage');
-            
-            statusMessage.textContent = 'Конвертация файла... Пожалуйста, подождите.';
-            errorMessage.textContent = ''; // Очищаем предыдущие ошибки
+
+            // Очищаем предыдущие сообщения и логи перед новым запросом
+            statusMessage.textContent = '';
+            errorMessage.textContent = '';
+            document.getElementById('debug-log').innerHTML = ''; // Очищаем отладочную консоль
+            logToConsole("Начало новой попытки конвертации...");
 
             if (fileInput.files.length === 0) {
-                errorMessage.textContent = 'Пожалуйста, выберите файл .newtrobat для загрузки.';
-                statusMessage.textContent = '';
+                const msg = 'Ошибка: Пожалуйста, выберите файл .newtrobat для загрузки.';
+                errorMessage.textContent = msg;
+                logToConsole(msg);
                 return;
             }
 
             const file = fileInput.files[0];
+            logToConsole(`Выбран файл: ${file.name} (Размер: ${file.size} байт)`);
+
+            // Дополнительная проверка на размер файла (ограничения Netlify Functions)
+            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 МБ, типичное ограничение для Netlify Functions
+            if (file.size > MAX_FILE_SIZE) {
+                const msg = `Ошибка: Размер файла (${(file.size / (1024 * 1024)).toFixed(2)} МБ) превышает максимально допустимый (${(MAX_FILE_SIZE / (1024 * 1024)).toFixed(2)} МБ).`;
+                errorMessage.textContent = msg;
+                logToConsole(msg);
+                return;
+            }
+
+
             const formData = new FormData();
-            formData.append('newtrobatFile', file);
+            formData.append('newtrobatFile', file); // Используйте то же имя, что ожидает Python-функция
+
+            statusMessage.textContent = 'Конвертация файла... Пожалуйста, подождите.';
+            logToConsole('Отправка запроса на Netlify Function...');
 
             try {
-                // Отправляем файл на нашу Netlify Function
-                // Путь к функции будет / .netlify/functions/convert_apk
-                const response = await fetch('/.netlify/functions/convert_apk', {
+                // Путь к функции будет /.netlify/functions/convert_apk
+                // Используем относительный путь, это должно помочь с CORS автоматически
+                const functionUrl = '/.netlify/functions/convert_apk'; // Относительный путь
+
+                logToConsole(`URL функции: ${functionUrl}`);
+
+                const response = await fetch(functionUrl, {
                     method: 'POST',
-                    body: formData
+                    body: formData,
                 });
+
+                logToConsole(`Получен ответ со статусом: ${response.status}`);
 
                 if (response.ok) {
                     // Если всё хорошо, предлагаем пользователю скачать файл
                     const blob = await response.blob();
-                    // Используем оригинальное имя файла (без расширения) + .apk
-                    const originalFileName = file.name.split('.').slice(0, -1).join('.'); 
+                    const originalFileName = file.name.split('.').slice(0, -1).join('.');
                     const fileName = `${originalFileName}.apk`;
-                    
+
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.style.display = 'none';
                     a.href = url;
-                    a.download = fileName; // Имя файла для скачивания
+                    a.download = fileName;
                     document.body.appendChild(a);
                     a.click();
-                    window.URL.revokeObjectURL(url); // Освобождаем URL
+                    window.URL.revokeObjectURL(url);
 
-                    statusMessage.textContent = `Ваш файл "${fileName}" готов! Скачивание началось.`;
+                    const successMsg = `Ваш файл "${fileName}" готов! Скачивание началось.`;
+                    statusMessage.textContent = successMsg;
+                    logToConsole(successMsg);
                 } else {
-                    const errorText = await response.text();
-                    errorMessage.textContent = `Ошибка конвертации: ${response.status} - ${errorText}`;
+                    // Если ответ не OK, пытаемся прочитать текст ошибки или JSON
+                    const errorResponseText = await response.text();
+                    let msg = `Ошибка HTTP: ${response.status} ${response.statusText || ''}`;
+                    if (errorResponseText) {
+                        try {
+                            const errorJson = JSON.parse(errorResponseText);
+                            // Если это JSON, логируем его для деталей
+                            msg += `\nСообщение от сервера: ${JSON.stringify(errorJson, null, 2)}`;
+                            logToConsole(`Ошибка JSON от функции: ${JSON.stringify(errorJson, null, 2)}`);
+                        } catch (e) {
+                            // Если не JSON, просто текст
+                            msg += `\nСообщение от сервера: ${errorResponseText}`;
+                            logToConsole(`Ошибка от функции (текст): ${errorResponseText}`);
+                        }
+                    } else {
+                        logToConsole(`Функция вернула ошибку без содержимого. Статус: ${response.status}`);
+                    }
+                    errorMessage.textContent = msg;
                     statusMessage.textContent = '';
                 }
             } catch (error) {
-                errorMessage.textContent = `Произошла ошибка сети: ${error.message}`;
+                const errMsg = `Произошла ошибка сети: ${error.message}. Проверьте подключение или логи функции Netlify.`;
+                errorMessage.textContent = errMsg;
                 statusMessage.textContent = '';
+                logToConsole(errMsg);
+                console.error('Ошибка при конвертации (консоль браузера):', error);
             }
         });
     </script>
@@ -176,6 +267,9 @@
     <p style="margin-top: 30px;">
         Также вы можете <a href="template.apk" download>скачать базовый шаблон APK</a>.
     </p>
+
+</body>
+</html>
 
 </body>
 </html>
