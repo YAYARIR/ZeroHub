@@ -131,6 +131,39 @@
             white-space: pre-wrap; /* Сохраняет переносы строк */
             word-wrap: break-word; /* Переносит длинные слова */
         }
+
+        /* Стили для полосы прогресса */
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow: hidden; /* Чтобы полоса прогресса не выходила за границы */
+            height: 25px; /* Высота контейнера */
+            display: none; /* Скрыто по умолчанию */
+            position: relative;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #76c7c0; /* Голубой */
+            text-align: center;
+            color: white;
+            line-height: 25px; /* Выравнивание текста по центру */
+            border-radius: 5px;
+            transition: width 0.3s ease-in-out; /* Плавное изменение ширины */
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 25px;
+            color: #333; /* Цвет текста поверх прогресс-бара */
+            font-size: 14px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -140,8 +173,13 @@
 
     <form id="uploadForm" enctype="multipart/form-data">
         <input type="file" id="newtrobatFile" name="newtrobatFile" accept=".newtrobat" required>
-        <button type="submit">Конвертировать в APK</button>
+        <button type="submit" id="submitBtn">Конвертировать в APK</button>
     </form>
+
+    <div id="progressContainer" class="progress-container">
+        <div id="progressBar" class="progress-bar"></div>
+        <div id="progressText" class="progress-text">0%</div>
+    </div>
 
     <div id="statusMessage"></div>
     <div id="errorMessage"></div>
@@ -162,6 +200,27 @@
             }
         }
 
+        // Функции для управления полосой прогресса
+        function showProgress() {
+            document.getElementById('progressContainer').style.display = 'block';
+            updateProgress(0, 'Подготовка...');
+            document.getElementById('submitBtn').disabled = true; // Отключаем кнопку
+        }
+
+        function updateProgress(percentage, text = '') {
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            progressBar.style.width = `${percentage}%`;
+            progressText.textContent = text || `${percentage}%`;
+        }
+
+        function hideProgress() {
+            document.getElementById('progressContainer').style.display = 'none';
+            updateProgress(0); // Сброс
+            document.getElementById('submitBtn').disabled = false; // Включаем кнопку
+        }
+
+
         document.getElementById('uploadForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Предотвращаем стандартную отправку формы
 
@@ -174,11 +233,13 @@
             errorMessage.textContent = '';
             document.getElementById('debug-log').innerHTML = ''; // Очищаем отладочную консоль
             logToConsole("Начало новой попытки конвертации...");
+            showProgress(); // Показываем полосу прогресса
 
             if (fileInput.files.length === 0) {
                 const msg = 'Ошибка: Пожалуйста, выберите файл .newtrobat для загрузки.';
                 errorMessage.textContent = msg;
                 logToConsole(msg);
+                hideProgress(); // Скрываем прогресс
                 return;
             }
 
@@ -191,6 +252,7 @@
                 const msg = `Ошибка: Размер файла (${(file.size / (1024 * 1024)).toFixed(2)} МБ) превышает максимально допустимый (${(MAX_FILE_SIZE / (1024 * 1024)).toFixed(2)} МБ).`;
                 errorMessage.textContent = msg;
                 logToConsole(msg);
+                hideProgress(); // Скрываем прогресс
                 return;
             }
 
@@ -200,22 +262,40 @@
 
             statusMessage.textContent = 'Конвертация файла... Пожалуйста, подождите.';
             logToConsole('Отправка запроса на Netlify Function...');
+            updateProgress(10, 'Загрузка файла...'); // Прогресс после начала загрузки
 
             try {
                 // Путь к функции будет /.netlify/functions/convert_apk
-                // Используем относительный путь, это должно помочь с CORS автоматически
                 const functionUrl = '/.netlify/functions/convert_apk'; // Относительный путь
 
                 logToConsole(`URL функции: ${functionUrl}`);
+
+                // Fetch API не предоставляет прямой прогресс загрузки для запроса (только для скачивания).
+                // Мы будем имитировать прогресс или основываться на таймауте.
+                // Для загрузки файла FormData прогресс обычно не отслеживается через fetch
+                // Можно использовать XMLHttpRequest для этого, но это усложнит код.
+                // Пока сделаем прогресс по времени.
+
+                let uploadProgressInterval;
+                let currentProgress = 10;
+                // Имитация прогресса ожидания ответа
+                uploadProgressInterval = setInterval(() => {
+                    if (currentProgress < 95) { // Не доходим до 100%, пока не получим ответ
+                        currentProgress += 5;
+                        updateProgress(currentProgress, `Конвертация... ${currentProgress}%`);
+                    }
+                }, 2000); // Обновляем каждые 2 секунды
 
                 const response = await fetch(functionUrl, {
                     method: 'POST',
                     body: formData,
                 });
 
+                clearInterval(uploadProgressInterval); // Останавливаем имитацию прогресса
                 logToConsole(`Получен ответ со статусом: ${response.status}`);
 
                 if (response.ok) {
+                    updateProgress(90, 'Получение результата...');
                     // Если всё хорошо, предлагаем пользователю скачать файл
                     const blob = await response.blob();
                     const originalFileName = file.name.split('.').slice(0, -1).join('.');
@@ -233,6 +313,7 @@
                     const successMsg = `Ваш файл "${fileName}" готов! Скачивание началось.`;
                     statusMessage.textContent = successMsg;
                     logToConsole(successMsg);
+                    updateProgress(100, 'Готово!');
                 } else {
                     // Если ответ не OK, пытаемся прочитать текст ошибки или JSON
                     const errorResponseText = await response.text();
@@ -253,13 +334,18 @@
                     }
                     errorMessage.textContent = msg;
                     statusMessage.textContent = '';
+                    updateProgress(0, 'Ошибка'); // Сброс прогресса при ошибке
                 }
             } catch (error) {
+                clearInterval(uploadProgressInterval); // Останавливаем имитацию прогресса
                 const errMsg = `Произошла ошибка сети: ${error.message}. Проверьте подключение или логи функции Netlify.`;
                 errorMessage.textContent = errMsg;
                 statusMessage.textContent = '';
                 logToConsole(errMsg);
                 console.error('Ошибка при конвертации (консоль браузера):', error);
+                updateProgress(0, 'Ошибка'); // Сброс прогресса при ошибке
+            } finally {
+                hideProgress(); // Скрываем прогресс в любом случае
             }
         });
     </script>
@@ -267,9 +353,6 @@
     <p style="margin-top: 30px;">
         Также вы можете <a href="template.apk" download>скачать базовый шаблон APK</a>.
     </p>
-
-</body>
-</html>
 
 </body>
 </html>
