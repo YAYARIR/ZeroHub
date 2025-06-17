@@ -3,105 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Конвертер .newtrobat в .apk</title>
+    <title>ZeroHub APK/XAPK Конвертер</title>
     <style>
-        /* Общие стили для body */
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f7f6;
-            color: #333;
             display: flex;
             flex-direction: column;
+            justify-content: center;
             align-items: center;
             min-height: 100vh;
-            box-sizing: border-box; /* Учитываем padding в общей ширине/высоте */
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        /* Стили для заголовков */
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        /* Стили для параграфов */
-        p {
-            text-align: center;
-            line-height: 1.6;
-            max-width: 600px;
-            margin-bottom: 20px;
-        }
-
-        /* Стили для формы */
-        form {
-            background-color: #ffffff;
+        .container {
+            background-color: #fff;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-            max-width: 400px;
+            text-align: center;
+            max-width: 500px;
             width: 100%;
         }
 
-        /* Стили для поля выбора файла */
-        input[type="file"] {
-            border: 1px solid #ccc;
-            padding: 10px;
-            border-radius: 4px;
-            width: calc(100% - 22px); /* Учитываем padding и border */
-            background-color: #f9f9f9;
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
         }
 
-        /* Стили для кнопки */
-        button[type="submit"] {
-            background-color: #4CAF50; /* Зеленый */
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: calc(100% - 20px);
+        }
+
+        button {
+            background-color: #007bff;
             color: white;
-            padding: 12px 20px;
+            padding: 12px 25px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s ease;
-            width: 100%;
         }
 
-        button[type="submit"]:hover {
-            background-color: #45a049; /* Темно-зеленый при наведении */
+        button:hover {
+            background-color: #0056b3;
         }
 
-        /* Стили для сообщений о статусе/ошибке */
-        #statusMessage {
-            margin-top: 20px;
-            color: #28a745; /* Зеленый для успеха */
-            font-weight: bold;
-            text-align: center;
-        }
-
-        #errorMessage {
-            margin-top: 20px;
-            color: #dc3545; /* Красный для ошибки */
-            font-weight: bold;
-            text-align: center;
-        }
-
-        /* Стили для ссылки на шаблон APK */
-        a {
-            color: #007bff; /* Синий */
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: #0056b3; /* Темно-синий при наведении */
-            text-decoration: underline;
-        }
-
-        /* Стили для отладочной консоли */
         .log-console {
             position: fixed;
             bottom: 10px;
@@ -168,13 +123,12 @@
 </head>
 <body>
 
-    <h1>Конвертер проектов в APK</h1>
-    <p>Загрузите ваш файл .newtrobat, и мы сконвертируем его в .apk приложение.</p>
-
-    <form id="uploadForm" enctype="multipart/form-data">
-        <input type="file" id="newtrobatFile" name="newtrobatFile" accept=".newtrobat" required>
-        <button type="submit" id="submitBtn">Конвертировать в APK</button>
-    </form>
+    <div class="container">
+        <h1>Конвертер .newtrobat в .apk</h1>
+        <p>Загрузите ваш файл .newtrobat, и мы сконвертируем его в .apk приложение.</p>
+        <input type="file" id="newtrobatFile" accept=".newtrobat">
+        <button id="convertBtn">Конвертировать в APK</button>
+    </div>
 
     <div id="progressContainer" class="progress-container">
         <div id="progressBar" class="progress-bar"></div>
@@ -185,26 +139,24 @@
     <div id="errorMessage"></div>
 
     <div class="log-console">
-        <p>Логи отладки:</p>
+        <p>Логи:</p>
         <div id="debug-log"></div>
     </div>
 
     <script>
-        // Функция для вывода логов в консоль на сайте
         function logToConsole(message) {
             const logElement = document.getElementById('debug-log');
             if (logElement) {
                 const timestamp = new Date().toLocaleTimeString();
                 logElement.innerHTML += `[${timestamp}] ${message}\n`;
-                logElement.scrollTop = logElement.scrollHeight; // Прокрутить вниз
+                logElement.scrollTop = logElement.scrollHeight;
             }
         }
 
-        // Функции для управления полосой прогресса
         function showProgress() {
             document.getElementById('progressContainer').style.display = 'block';
             updateProgress(0, 'Подготовка...');
-            document.getElementById('submitBtn').disabled = true; // Отключаем кнопку
+            document.getElementById('convertBtn').disabled = true;
         }
 
         function updateProgress(percentage, text = '') {
@@ -216,143 +168,116 @@
 
         function hideProgress() {
             document.getElementById('progressContainer').style.display = 'none';
-            updateProgress(0); // Сброс
-            document.getElementById('submitBtn').disabled = false; // Включаем кнопку
+            updateProgress(0);
+            document.getElementById('convertBtn').disabled = false;
         }
 
-
-        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Предотвращаем стандартную отправку формы
-
+        document.getElementById('convertBtn').addEventListener('click', async () => {
             const fileInput = document.getElementById('newtrobatFile');
             const statusMessage = document.getElementById('statusMessage');
             const errorMessage = document.getElementById('errorMessage');
 
-            // Очищаем предыдущие сообщения и логи перед новым запросом
             statusMessage.textContent = '';
             errorMessage.textContent = '';
-            document.getElementById('debug-log').innerHTML = ''; // Очищаем отладочную консоль
+            document.getElementById('debug-log').innerHTML = '';
             logToConsole("Начало новой попытки конвертации...");
-            showProgress(); // Показываем полосу прогресса
+            showProgress();
 
             if (fileInput.files.length === 0) {
-                const msg = 'Ошибка: Пожалуйста, выберите файл .newtrobat для загрузки.';
-                errorMessage.textContent = msg;
+                const msg = "Ошибка: Пожалуйста, выберите файл .newtrobat.";
                 logToConsole(msg);
-                hideProgress(); // Скрываем прогресс
+                errorMessage.textContent = msg;
+                hideProgress();
                 return;
             }
 
             const file = fileInput.files[0];
             logToConsole(`Выбран файл: ${file.name} (Размер: ${file.size} байт)`);
 
-            // Дополнительная проверка на размер файла (ограничения Netlify Functions)
-            const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 МБ, типичное ограничение для Netlify Functions
+            // Учитывая, что .newtrobat могут быть большими, увеличим лимит,
+            // но помним про 25 МБ лимит на тело запроса Netlify Functions.
+            const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 МБ
             if (file.size > MAX_FILE_SIZE) {
                 const msg = `Ошибка: Размер файла (${(file.size / (1024 * 1024)).toFixed(2)} МБ) превышает максимально допустимый (${(MAX_FILE_SIZE / (1024 * 1024)).toFixed(2)} МБ).`;
                 errorMessage.textContent = msg;
                 logToConsole(msg);
-                hideProgress(); // Скрываем прогресс
+                hideProgress();
                 return;
             }
 
-
             const formData = new FormData();
-            formData.append('newtrobatFile', file); // Используйте то же имя, что ожидает Python-функция
+            formData.append('newtrobat_file', file); // Имя поля, которое будет ожидать Python-функция
 
-            statusMessage.textContent = 'Конвертация файла... Пожалуйста, подождите.';
             logToConsole('Отправка запроса на Netlify Function...');
-            updateProgress(10, 'Загрузка файла...'); // Прогресс после начала загрузки
+            updateProgress(10, 'Загрузка файла...');
+
+            let progressInterval;
+            let currentProgress = 10;
+            progressInterval = setInterval(() => {
+                if (currentProgress < 95) { // Не доходим до 100%, пока не получим ответ
+                    currentProgress += 5;
+                    updateProgress(currentProgress, `Конвертация... ${currentProgress}%`);
+                }
+            }, 1000); // Обновляем каждые 1 секунду
 
             try {
-                // Путь к функции будет /.netlify/functions/convert_apk
-                const functionUrl = '/.netlify/functions/convert_apk'; // Относительный путь
+                // Путь к функции
+                const functionUrl = '/.netlify/functions/convert_newtrobat_to_apk'; // Предлагаемое имя функции
 
                 logToConsole(`URL функции: ${functionUrl}`);
-
-                // Fetch API не предоставляет прямой прогресс загрузки для запроса (только для скачивания).
-                // Мы будем имитировать прогресс или основываться на таймауте.
-                // Для загрузки файла FormData прогресс обычно не отслеживается через fetch
-                // Можно использовать XMLHttpRequest для этого, но это усложнит код.
-                // Пока сделаем прогресс по времени.
-
-                let uploadProgressInterval;
-                let currentProgress = 10;
-                // Имитация прогресса ожидания ответа
-                uploadProgressInterval = setInterval(() => {
-                    if (currentProgress < 95) { // Не доходим до 100%, пока не получим ответ
-                        currentProgress += 5;
-                        updateProgress(currentProgress, `Конвертация... ${currentProgress}%`);
-                    }
-                }, 2000); // Обновляем каждые 2 секунды
 
                 const response = await fetch(functionUrl, {
                     method: 'POST',
                     body: formData,
                 });
 
-                clearInterval(uploadProgressInterval); // Останавливаем имитацию прогресса
+                clearInterval(progressInterval);
                 logToConsole(`Получен ответ со статусом: ${response.status}`);
 
                 if (response.ok) {
                     updateProgress(90, 'Получение результата...');
-                    // Если всё хорошо, предлагаем пользователю скачать файл
-                    const blob = await response.blob();
-                    const originalFileName = file.name.split('.').slice(0, -1).join('.');
-                    const fileName = `${originalFileName}.apk`;
-
-                    const url = window.URL.createObjectURL(blob);
+                    const resultBlob = await response.blob();
+                    const url = URL.createObjectURL(resultBlob);
                     const a = document.createElement('a');
-                    a.style.display = 'none';
                     a.href = url;
-                    a.download = fileName;
+                    // Используем оригинальное имя файла (без расширения) + .apk
+                    const originalFileName = file.name.split('.').slice(0, -1).join('.');
+                    a.download = `${originalFileName}.apk`;
                     document.body.appendChild(a);
                     a.click();
-                    window.URL.revokeObjectURL(url);
-
-                    const successMsg = `Ваш файл "${fileName}" готов! Скачивание началось.`;
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    const successMsg = `Файл ${a.download} успешно создан и скачан.`;
                     statusMessage.textContent = successMsg;
                     logToConsole(successMsg);
                     updateProgress(100, 'Готово!');
                 } else {
-                    // Если ответ не OK, пытаемся прочитать текст ошибки или JSON
-                    const errorResponseText = await response.text();
-                    let msg = `Ошибка HTTP: ${response.status} ${response.statusText || ''}`;
-                    if (errorResponseText) {
-                        try {
-                            const errorJson = JSON.parse(errorResponseText);
-                            // Если это JSON, логируем его для деталей
-                            msg += `\nСообщение от сервера: ${JSON.stringify(errorJson, null, 2)}`;
-                            logToConsole(`Ошибка JSON от функции: ${JSON.stringify(errorJson, null, 2)}`);
-                        } catch (e) {
-                            // Если не JSON, просто текст
-                            msg += `\nСообщение от сервера: ${errorResponseText}`;
-                            logToConsole(`Ошибка от функции (текст): ${errorResponseText}`);
-                        }
-                    } else {
-                        logToConsole(`Функция вернула ошибку без содержимого. Статус: ${response.status}`);
+                    const errorText = await response.text();
+                    let msg = `Ошибка HTTP: ${response.status} - ${response.statusText || 'Неизвестная ошибка'}`;
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        msg += `\nСообщение от сервера: ${JSON.stringify(errorJson, null, 2)}`;
+                        logToConsole(`Ошибка JSON от функции: ${JSON.stringify(errorJson, null, 2)}`);
+                    } catch (e) {
+                        msg += `\nСообщение от сервера: ${errorText}`;
+                        logToConsole(`Ошибка от функции (текст): ${errorText}`);
                     }
                     errorMessage.textContent = msg;
-                    statusMessage.textContent = '';
-                    updateProgress(0, 'Ошибка'); // Сброс прогресса при ошибке
+                    updateProgress(0, 'Ошибка');
                 }
+
             } catch (error) {
-                clearInterval(uploadProgressInterval); // Останавливаем имитацию прогресса
+                clearInterval(progressInterval);
                 const errMsg = `Произошла ошибка сети: ${error.message}. Проверьте подключение или логи функции Netlify.`;
                 errorMessage.textContent = errMsg;
-                statusMessage.textContent = '';
                 logToConsole(errMsg);
-                console.error('Ошибка при конвертации (консоль браузера):', error);
-                updateProgress(0, 'Ошибка'); // Сброс прогресса при ошибке
+                console.error('Ошибка при конвертации:', error);
+                updateProgress(0, 'Ошибка');
             } finally {
-                hideProgress(); // Скрываем прогресс в любом случае
+                hideProgress();
             }
         });
     </script>
-
-    <p style="margin-top: 30px;">
-        Также вы можете <a href="template.apk" download>скачать базовый шаблон APK</a>.
-    </p>
 
 </body>
 </html>
